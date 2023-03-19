@@ -3,7 +3,7 @@ package org.example;
 public class Main {
 
   public static void main(String[] args) {
-    String[] words = {"хорда", "Макс", "Марфицына"};
+    String[] words = {"хорда", "Макс"};
 
     CrosswordGenerator CG = new CrosswordGenerator(words);
 
