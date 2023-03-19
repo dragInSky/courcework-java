@@ -1,15 +1,17 @@
 package org.example;
 
 public class Main {
-    public static void main(String[] args) {
-        String[] words = {"высота", "радиус", "циркуль", "диаметр", "центр", "хорда"};
 
-        CrosswordGenerator CG = new CrosswordGenerator(words);
+  public static void main(String[] args) {
+    String[] words = {"хорда", "Макс", "Марфицына"};
 
-        CG.appendHorizontal(words[0]);
-        CG.crosswordFill(words[0], words);
+    CrosswordGenerator CG = new CrosswordGenerator(words);
 
-        CG.clearEmptyCells();
-        CG.crosswordPrint();
-    }
+    CG.appendHorizontal(words[0]);
+    CG.crosswordFill(words[0], words);
+
+    CG.clearEmptyCells();
+    CG.crosswordPrint();
+  }
 }
+
