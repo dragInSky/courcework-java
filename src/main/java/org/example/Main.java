@@ -1,17 +1,22 @@
 package org.example;
 
+// zdesb bil misha, on el tvoi sup i spal na tvoei krovati.
 public class Main {
 
-  public static void main(String[] args) {
-    String[] words = {"хорда", "Макс", "Марфицына"};
+    public static void main(String[] args) {
+        String[] words = {"диаметр", "лось", "математика", "окорок", "левша", "яя"};
 
-    CrosswordGenerator CG = new CrosswordGenerator(words);
+        CrosswordGenerator CG = new CrosswordGenerator(words);
 
-    CG.appendHorizontal(words[0]);
-    CG.crosswordFill(words[0], words);
+        CG.initCrossword(words);
+        CG.crosswordFill(words);
 
-    CG.clearEmptyCells();
-    CG.crosswordPrint();
-  }
+        for (String word : words)
+            if (!CG.getUsedWords().contains(word))
+                System.out.println(word);
+
+        CG.clearEmptyCells();
+        CG.crosswordPrint();
+    }
 }
 
