@@ -1,10 +1,10 @@
-package org.example;
+package crossword;
 
 // zdesb bil misha, on el tvoi sup i spal na tvoei krovati.
 public class Main {
 
     public static void main(String[] args) {
-        String[] words = {"диаметр", "лось", "математика", "окорок", "левша", "яя", "ююю", "ъ"};
+        String[] words = {"кот", "кран", "озеро"};
 
         CrosswordGenerator CG = new CrosswordGenerator(words);
 

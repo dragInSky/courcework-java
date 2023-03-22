@@ -1,4 +1,4 @@
-package org.example;
+package crossword;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -34,6 +34,10 @@ public class CrosswordGenerator {
 
     public ArrayList<String> getUsedWords() {
         return usedWords;
+    }
+
+    public char[][] getCrossword() {
+        return crossword;
     }
 
     private void appendHorizontal(String word, int posX, int posY) {
