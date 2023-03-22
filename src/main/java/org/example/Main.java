@@ -4,16 +4,15 @@ package org.example;
 public class Main {
 
     public static void main(String[] args) {
-        String[] words = {"диаметр", "лось", "математика", "окорок", "левша", "яя"};
+        String[] words = {"диаметр", "лось", "математика", "окорок", "левша", "яя", "ююю", "ъ"};
 
         CrosswordGenerator CG = new CrosswordGenerator(words);
 
-        CG.initCrossword(words);
-        CG.crosswordFill(words);
+        CG.crosswordFill();
 
         for (String word : words)
             if (!CG.getUsedWords().contains(word))
-                System.out.println(word);
+                CG.appendIncompatible(word);
 
         CG.clearEmptyCells();
         CG.crosswordPrint();
