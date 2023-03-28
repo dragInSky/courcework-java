@@ -40,6 +40,15 @@ public class CrosswordGenerator {
         return crossword;
     }
 
+    public String[][] charToStrCrossword() {
+        String[][] strCrossword = new String[height][len];
+        for (int i = 0; i < height; i++)
+            for (int j = 0; j < len; j++)
+                strCrossword[i][j] = String.valueOf(crossword[i][j]);
+
+        return strCrossword;
+    }
+
     private void appendHorizontal(String word, int posX, int posY) {
         addWordWithOrientation(word, true);
 
@@ -148,7 +157,16 @@ public class CrosswordGenerator {
         }
     }
 
+    public void strCrosswordPrint(String[][] strCrossword) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < len; j++)
+                System.out.print(strCrossword[i][j] + " ");
+            System.out.println();
+        }
+    }
+
     private void fillLimits() {
+
         boolean flagX = true, flagY = true;
         for (int i = 0; i < height; i++)
             for (int j = 0; j < len; j++) {

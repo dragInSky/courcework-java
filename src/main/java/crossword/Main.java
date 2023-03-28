@@ -16,6 +16,11 @@ public class Main {
 
         CG.clearEmptyCells();
         CG.crosswordPrint();
+
+        System.out.println();
+        //Вот это кроссворд со строками вместо чаров
+        String[][] strCrossword = CG.charToStrCrossword();
+        CG.strCrosswordPrint(strCrossword);
     }
 }
 
