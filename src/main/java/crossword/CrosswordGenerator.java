@@ -1,6 +1,7 @@
 package crossword;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class CrosswordGenerator {
@@ -8,12 +9,12 @@ public class CrosswordGenerator {
     private int startX, startY, endX, endY;
     private int wordPosX, wordPosY;
 
-    private final ArrayList<String> usedWords = new ArrayList<>();
-    private final ArrayList<Boolean> orientation = new ArrayList<>();
-    private final String[] words;
+    private final List<String> usedWords = new ArrayList<>();
+    private final List<Boolean> orientation = new ArrayList<>();
+    private final List<String> words;
     private char[][] crossword;
 
-    public CrosswordGenerator(String[] words) {
+    public CrosswordGenerator(List<String> words) {
         this.words = words;
 
         int wordsLen = 0;
@@ -29,10 +30,10 @@ public class CrosswordGenerator {
             for (int j = 0; j < len; j++)
                 crossword[i][j] = '_';
 
-        appendHorizontal(words[0], wordsLen, wordsLen);
+        appendHorizontal(words.get(0), wordsLen, wordsLen);
     }
 
-    public ArrayList<String> getUsedWords() {
+    public List<String> getUsedWords() {
         return usedWords;
     }
 
@@ -202,9 +203,29 @@ public class CrosswordGenerator {
         crossword = newCrossword;
     }
 
-    public void appendIncompatible(String word) {
-        fillLimits();
+    public void mergeCrosswords(CrosswordGenerator CG) {
+        if (this == CG)
+            return;
 
-        appendHorizontal(word, startX, endY + 1);
+        int newLen = Math.max(len, CG.len);
+        int newHeight = height + CG.height + 1;
+
+        char[][] newCrossword = new char[newHeight][newLen];
+        char[][] secondCrossword = CG.getCrossword();
+
+        for (int i = 0; i < newHeight; i++)
+            for (int j = 0; j < newLen; j++) {
+                if (i < height)
+                    newCrossword[i][j] = (j < len) ? crossword[i][j] : '_';
+                else if (i == height)
+                    newCrossword[i][j] = '_';
+                else
+                    newCrossword[i][j] = (j < CG.len) ? secondCrossword[i - height - 1][j] : '_';
+            }
+
+        len = newLen;
+        height = newHeight;
+
+        crossword = newCrossword;
     }
 }
