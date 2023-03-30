@@ -4,207 +4,245 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class CrosswordGenerator {
-    private int len, height;
-    private int startX, startY, endX, endY;
-    private int wordPosX, wordPosY;
 
-    private final ArrayList<String> usedWords = new ArrayList<>();
-    private final ArrayList<Boolean> orientation = new ArrayList<>();
-    private final String[] words;
-    private char[][] crossword;
+  private int len, height;
+  private int startX, startY, endX, endY;
+  private int wordPosX, wordPosY;
 
-    public CrosswordGenerator(String[] words) {
-        this.words = words;
+  private final ArrayList<String> usedWords = new ArrayList<>();
+  private final ArrayList<Boolean> orientation = new ArrayList<>();
+  private final String[] words;
+  private char[][] crossword;
 
-        int wordsLen = 0;
-        for (String word : words)
-            wordsLen += word.length();
+  public CrosswordGenerator(String[] words) {
+    this.words = words;
 
-        len = wordsLen * 2;
-        height = wordsLen * 2;
+    int wordsLen = 0;
+      for (String word : words) {
+          wordsLen += word.length();
+      }
 
-        crossword = new char[height][len];
+    len = wordsLen * 2;
+    height = wordsLen * 2;
 
-        for (int i = 0; i < height; i++)
-            for (int j = 0; j < len; j++)
-                crossword[i][j] = '_';
+    crossword = new char[height][len];
 
-        appendHorizontal(words[0], wordsLen, wordsLen);
-    }
+      for (int i = 0; i < height; i++) {
+          for (int j = 0; j < len; j++) {
+              crossword[i][j] = '_';
+          }
+      }
 
-    public ArrayList<String> getUsedWords() {
-        return usedWords;
-    }
+    appendHorizontal(words[0], wordsLen, wordsLen);
+  }
 
-    public char[][] getCrossword() {
-        return crossword;
-    }
+  public ArrayList<String> getUsedWords() {
+    return usedWords;
+  }
 
-    public String[][] charToStrCrossword() {
-        String[][] strCrossword = new String[height][len];
-        for (int i = 0; i < height; i++)
-            for (int j = 0; j < len; j++)
-                strCrossword[i][j] = String.valueOf(crossword[i][j]);
+  public char[][] getCrossword() {
+    return crossword;
+  }
 
-        return strCrossword;
-    }
+  public String[][] charToStrCrossword() {
+    String[][] strCrossword = new String[height][len];
+      for (int i = 0; i < height; i++) {
+          for (int j = 0; j < len; j++) {
+              strCrossword[i][j] = String.valueOf(crossword[i][j]);
+          }
+      }
 
-    private void appendHorizontal(String word, int posX, int posY) {
-        addWordWithOrientation(word, true);
+    return strCrossword;
+  }
 
-        for (int idx = 0; idx < word.length(); idx++)
-            crossword[posY][posX + idx] = word.charAt(idx);
-    }
+  private void appendHorizontal(String word, int posX, int posY) {
+    addWordWithOrientation(word, true);
 
-    private void appendVertical(String word, int posX, int posY) {
-        addWordWithOrientation(word, false);
+      for (int idx = 0; idx < word.length(); idx++) {
+          crossword[posY][posX + idx] = word.charAt(idx);
+      }
+  }
 
-        for (int idx = 0; idx < word.length(); idx++)
-            crossword[posY + idx][posX] = word.charAt(idx);
-    }
+  private void appendVertical(String word, int posX, int posY) {
+    addWordWithOrientation(word, false);
 
-    private boolean isHorizontalAccessible(String word, int posX, int posY) {
-        for (int idx = 1; idx < word.length(); idx++)
-            if ((crossword[posY][posX + idx] != '_' && crossword[posY][posX + idx] != word.charAt(idx)) ||
-                    (crossword[posY + 1][posX + idx] != '_' && crossword[posY + 1][posX + idx - 1] != '_') ||
-                    (crossword[posY - 1][posX + idx] != '_' && crossword[posY - 1][posX + idx - 1] != '_'))
-                return false;
-        return true;
-    }
+      for (int idx = 0; idx < word.length(); idx++) {
+          crossword[posY + idx][posX] = word.charAt(idx);
+      }
+  }
 
-    private boolean isVerticalAccessible(String word, int posX, int posY) {
-        for (int idx = 1; idx < word.length(); idx++)
-            if ((crossword[posY + idx][posX] != '_' && crossword[posY + idx][posX] != word.charAt(idx)) ||
-                    (crossword[posY + idx][posX + 1] != '_' && crossword[posY + idx - 1][posX + 1] != '_') ||
-                    (crossword[posY + idx][posX - 1] != '_' && crossword[posY + idx - 1][posX - 1] != '_'))
-                return false;
-        return true;
-    }
+  private boolean isHorizontalAccessible(String word, int posX, int posY) {
+      for (int idx = 1; idx < word.length(); idx++) {
+          if ((crossword[posY][posX + idx] != '_' && crossword[posY][posX + idx] != word.charAt(
+              idx))
+              ||
+              (crossword[posY + 1][posX + idx] != '_' && crossword[posY + 1][posX + idx - 1] != '_')
+              ||
+              (crossword[posY - 1][posX + idx] != '_'
+                  && crossword[posY - 1][posX + idx - 1] != '_')) {
+              return false;
+          }
+      }
+    return true;
+  }
 
-    private void absWordPos(String word, boolean prevWordOrient) {
-        fillLimits();
+  private boolean isVerticalAccessible(String word, int posX, int posY) {
+      for (int idx = 1; idx < word.length(); idx++) {
+          if ((crossword[posY + idx][posX] != '_' && crossword[posY + idx][posX] != word.charAt(
+              idx))
+              ||
+              (crossword[posY + idx][posX + 1] != '_' && crossword[posY + idx - 1][posX + 1] != '_')
+              ||
+              (crossword[posY + idx][posX - 1] != '_'
+                  && crossword[posY + idx - 1][posX - 1] != '_')) {
+              return false;
+          }
+      }
+    return true;
+  }
 
-        if (prevWordOrient) {
-            for (int i = startY, count = 0; i < endY; i++)
-                for (int j = startX; j < endX; j++) {
-                    if (crossword[i][j] == word.charAt(count)) count++;
-                    else count = 0;
-                    if (count == word.length()) {
-                        wordPosX = j - count + 1;
-                        wordPosY = i;
-                        return;
-                    }
+  private void absWordPos(String word, boolean prevWordOrient) {
+    fillLimits();
+
+    if (prevWordOrient) {
+        for (int i = startY, count = 0; i < endY; i++) {
+            for (int j = startX; j < endX; j++) {
+                if (crossword[i][j] == word.charAt(count)) {
+                    count++;
+                } else {
+                    count = 0;
                 }
-        } else {
-            for (int j = startX, count = 0; j < endX; j++)
-                for (int i = startY; i < endY; i++) {
-                    if (crossword[i][j] == word.charAt(count)) count++;
-                    else count = 0;
-                    if (count == word.length()) {
-                        wordPosX = j;
-                        wordPosY = i - count + 1;
-                        return;
-                    }
-                }
-        }
-    }
-
-    public void crosswordFill() {
-        for (String word : words) {
-            if (!getUsedWords().contains(word))
-                continue;
-
-            for (String secondWord : words)
-                if (!usedWords.contains(secondWord) && !Objects.equals(word, secondWord))
-                    for (int i = 0; i < word.length(); i++) {
-                        char sym = word.charAt(i);
-                        int secondWordSameCharPos = secondWord.indexOf(sym);
-
-                        if (secondWordSameCharPos == -1)
-                            continue;
-
-                        boolean prevWordOrient = orientation.get(getUsedWords().indexOf(word));
-
-                        absWordPos(word, prevWordOrient);
-
-                        if (prevWordOrient) {
-                            int posX = wordPosX + i;
-                            int posY = wordPosY - secondWordSameCharPos;
-                            if (isVerticalAccessible(secondWord, posX, posY))
-                                appendVertical(secondWord, posX, posY);
-                        } else {
-                            int posX = wordPosX - secondWordSameCharPos;
-                            int posY = wordPosY + i;
-                            if (isHorizontalAccessible(secondWord, posX, posY))
-                                appendHorizontal(secondWord, posX, posY);
-                        }
-
-                        break;
-                    }
-        }
-    }
-
-    private void addWordWithOrientation(String word, boolean curOrient) {
-        usedWords.add(word);
-        orientation.add(curOrient);
-    }
-
-    public void crosswordPrint() {
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < len; j++)
-                System.out.print(crossword[i][j] + " ");
-            System.out.println();
-        }
-    }
-
-    public void strCrosswordPrint(String[][] strCrossword) {
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < len; j++)
-                System.out.print(strCrossword[i][j] + " ");
-            System.out.println();
-        }
-    }
-
-    private void fillLimits() {
-
-        boolean flagX = true, flagY = true;
-        for (int i = 0; i < height; i++)
-            for (int j = 0; j < len; j++) {
-                if (crossword[i][j] != '_') {
-                    if (flagY) {
-                        startY = i;
-                        flagY = false;
-                    }
-                    endY = i + 1;
-                }
-
-                if (crossword[j][i] != '_') {
-                    if (flagX) {
-                        startX = i;
-                        flagX = false;
-                    }
-                    endX = i + 1;
+                if (count == word.length()) {
+                    wordPosX = j - count + 1;
+                    wordPosY = i;
+                    return;
                 }
             }
+        }
+    } else {
+        for (int j = startX, count = 0; j < endX; j++) {
+            for (int i = startY; i < endY; i++) {
+                if (crossword[i][j] == word.charAt(count)) {
+                    count++;
+                } else {
+                    count = 0;
+                }
+                if (count == word.length()) {
+                    wordPosX = j;
+                    wordPosY = i - count + 1;
+                    return;
+                }
+            }
+        }
     }
+  }
 
-    public void clearEmptyCells() {
-        fillLimits();
+  public void crosswordFill() {
+    for (String word : words) {
+        if (!getUsedWords().contains(word)) {
+            continue;
+        }
 
-        len = endX - startX;
-        height = endY - startY;
+        for (String secondWord : words) {
+            if (!usedWords.contains(secondWord) && !Objects.equals(word, secondWord)) {
+                for (int i = 0; i < word.length(); i++) {
+                    char sym = word.charAt(i);
+                    int secondWordSameCharPos = secondWord.indexOf(sym);
 
-        char[][] newCrossword = new char[height][len];
+                    if (secondWordSameCharPos == -1) {
+                        continue;
+                    }
 
-        for (int i = 0; i < height; i++)
-            System.arraycopy(crossword[i + startY], startX, newCrossword[i], 0, len);
+                    boolean prevWordOrient = orientation.get(getUsedWords().indexOf(word));
 
-        crossword = newCrossword;
+                    absWordPos(word, prevWordOrient);
+
+                    if (prevWordOrient) {
+                        int posX = wordPosX + i;
+                        int posY = wordPosY - secondWordSameCharPos;
+                        if (isVerticalAccessible(secondWord, posX, posY)) {
+                            appendVertical(secondWord, posX, posY);
+                        }
+                    } else {
+                        int posX = wordPosX - secondWordSameCharPos;
+                        int posY = wordPosY + i;
+                        if (isHorizontalAccessible(secondWord, posX, posY)) {
+                            appendHorizontal(secondWord, posX, posY);
+                        }
+                    }
+
+                    break;
+                }
+            }
+        }
     }
+  }
 
-    public void appendIncompatible(String word) {
-        fillLimits();
+  private void addWordWithOrientation(String word, boolean curOrient) {
+    usedWords.add(word);
+    orientation.add(curOrient);
+  }
 
-        appendHorizontal(word, startX, endY + 1);
+  public void crosswordPrint() {
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < len; j++) {
+            System.out.print(crossword[i][j] + " ");
+        }
+      System.out.println();
     }
+  }
+
+  public void strCrosswordPrint(String[][] strCrossword) {
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < len; j++) {
+            System.out.print(strCrossword[i][j] + " ");
+        }
+      System.out.println();
+    }
+  }
+
+  private void fillLimits() {
+
+    boolean flagX = true, flagY = true;
+      for (int i = 0; i < height; i++) {
+          for (int j = 0; j < len; j++) {
+              if (crossword[i][j] != '_') {
+                  if (flagY) {
+                      startY = i;
+                      flagY = false;
+                  }
+                  endY = i + 1;
+              }
+
+              if (crossword[j][i] != '_') {
+                  if (flagX) {
+                      startX = i;
+                      flagX = false;
+                  }
+                  endX = i + 1;
+              }
+          }
+      }
+  }
+
+  public void clearEmptyCells() {
+    fillLimits();
+
+    len = endX - startX;
+    height = endY - startY;
+
+    char[][] newCrossword = new char[height][len];
+
+      for (int i = 0; i < height; i++) {
+          System.arraycopy(crossword[i + startY], startX, newCrossword[i], 0, len);
+      }
+
+    crossword = newCrossword;
+  }
+
+  public void appendIncompatible(String word) {
+    fillLimits();
+
+    appendHorizontal(word, startX, endY + 1);
+  }
 }
