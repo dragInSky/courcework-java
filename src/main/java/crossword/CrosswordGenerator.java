@@ -1,6 +1,8 @@
 package crossword;
 
+
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -17,6 +19,7 @@ public class CrosswordGenerator {
 
     public CrosswordGenerator(List<String> words) {
         this.words = words;
+        this.words.sort(Comparator.comparingInt(String::length));
 
         int wordsLen = 0;
         for (String word : words)
@@ -78,19 +81,23 @@ public class CrosswordGenerator {
     }
 
     private boolean isHorizontalAccessible(String word, int posX, int posY) {
-        for (int idx = 1; idx < word.length(); idx++)
+        for (int idx = 1, wordLen = word.length(); idx < wordLen; idx++)
             if ((crossword[posY][posX + idx] != '_' && crossword[posY][posX + idx] != word.charAt(idx)) ||
                     (crossword[posY + 1][posX + idx] != '_' && crossword[posY + 1][posX + idx - 1] != '_') ||
-                    (crossword[posY - 1][posX + idx] != '_' && crossword[posY - 1][posX + idx - 1] != '_'))
+                    (crossword[posY - 1][posX + idx] != '_' && crossword[posY - 1][posX + idx - 1] != '_') ||
+                    (posX - 1 >= 0 && crossword[posY][posX - 1] != '_') ||
+                    (posX + wordLen <= len && crossword[posY][posX + wordLen] != '_'))
                 return false;
         return true;
     }
 
     private boolean isVerticalAccessible(String word, int posX, int posY) {
-        for (int idx = 1; idx < word.length(); idx++)
+        for (int idx = 1, wordLen = word.length(); idx < wordLen; idx++)
             if ((crossword[posY + idx][posX] != '_' && crossword[posY + idx][posX] != word.charAt(idx)) ||
                     (crossword[posY + idx][posX + 1] != '_' && crossword[posY + idx - 1][posX + 1] != '_') ||
-                    (crossword[posY + idx][posX - 1] != '_' && crossword[posY + idx - 1][posX - 1] != '_'))
+                    (crossword[posY + idx][posX - 1] != '_' && crossword[posY + idx - 1][posX - 1] != '_') ||
+                    (posY - 1 >= 0 && crossword[posY - 1][posX] != '_') ||
+                    (posY + wordLen <= len && crossword[posY + wordLen][posX] != '_'))
                 return false;
         return true;
     }
