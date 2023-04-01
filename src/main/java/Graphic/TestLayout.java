@@ -1,11 +1,11 @@
 package Graphic;
 
-import static ScientificWork.Graphic.Scientific.AdditionalClasses.DeleteActionWrapper.removeBEEP;
+import static Graphic.AdditionalClasses.DeleteActionWrapper.removeBEEP;
 
-import ScientificWork.Graphic.Scientific.AdditionalClasses.JTextFieldLimit;
-import ScientificWork.Graphic.Scientific.Handlers.EventButtonHandler;
-import ScientificWork.Graphic.Scientific.Handlers.EventKeyboardHadler;
-import ScientificWork.crossword.Main;
+import Graphic.AdditionalClasses.JTextFieldLimit;
+import Graphic.Handlers.EventButtonHandler;
+import Graphic.Handlers.EventKeyboardHadler;
+import crossword.Main;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;

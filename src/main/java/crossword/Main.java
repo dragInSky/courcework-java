@@ -6,6 +6,22 @@ import java.util.List;
 
 // zdesb bil misha, on el tvoi sup i spal na tvoei krovati.
 public class Main {
+    private static String[][] strCrossword;
+    private static Tuple size;
+    private static HashMap<String, Boolean> wordsWithOrientation;
+
+    public static String[][] getCrossword() {
+        return strCrossword;
+    }
+
+    public static Tuple getSize() {
+        return size;
+    }
+
+    public static HashMap<String, Boolean> getWordsMap() {
+        return wordsWithOrientation;
+    }
+
     public static void main(String[] args) {
 //        List<String> words = new ArrayList<>(List.of(
 //                "оса", "паук",
@@ -29,9 +45,9 @@ public class Main {
 
         ultimateCG.crosswordPrint();
 
-        String[][] strCrossword = ultimateCG.charToStrCrossword();
-        Tuple size = ultimateCG.getSize();
-        HashMap<String, Boolean> wordsWithOrientation = ultimateCG.getWordsWithOrientation();
+        strCrossword = ultimateCG.charToStrCrossword();
+        size = ultimateCG.getSize();
+        wordsWithOrientation = ultimateCG.getWordsWithOrientation();
     }
 
     private static CrosswordGenerator createCrossword(List<String> words) {
