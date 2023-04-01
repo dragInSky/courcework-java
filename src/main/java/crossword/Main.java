@@ -1,28 +1,54 @@
 package crossword;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 // zdesb bil misha, on el tvoi sup i spal na tvoei krovati.
 public class Main {
+    public static void main(String[] args) {
+//        List<String> words = new ArrayList<>(List.of(
+//                "оса", "паук",
+//                "муха",
+//                "деревня", "яд", "еж",
+//                "theatre", "zoo", "octet"
+//        ));
 
-  public static void main(String[] args) {
-    String[] words = {"кот", "кран", "озеро"};
+//        List<String> words = new ArrayList<>(List.of(
+//                "высота", "радиус", "циркуль", "диаметр", "центр", "хорда"
+//        ));
 
-    CrosswordGenerator CG = new CrosswordGenerator(words);
+        List<String> words = new ArrayList<>(List.of(
+                "фрезер", "фуганок", "пила", "молоток", "ножовка", "гвоздодёр", "стамеска", "топор", "рейсмус"
+        ));
 
-    CG.crosswordFill();
+        CrosswordGenerator ultimateCG = createCrossword(words);
 
-    for (String word : words) {
-      if (!CG.getUsedWords().contains(word)) {
-        CG.appendIncompatible(word);
-      }
+        while (!words.isEmpty())
+            ultimateCG.mergeCrosswords(createCrossword(words));
+
+        ultimateCG.crosswordPrint();
+
+        String[][] strCrossword = ultimateCG.charToStrCrossword();
+        Tuple size = ultimateCG.getSize();
+        HashMap<String, Boolean> wordsWithOrientation = ultimateCG.getWordsWithOrientation();
     }
 
-    CG.clearEmptyCells();
-    CG.crosswordPrint();
+    private static CrosswordGenerator createCrossword(List<String> words) {
+        CrosswordGenerator CG = new CrosswordGenerator(words);
+        CG.crosswordFill();
 
-    System.out.println();
-    //Вот это кроссворд со строками вместо чаров
-    String[][] strCrossword = CG.charToStrCrossword();
-    CG.strCrosswordPrint(strCrossword);
-  }
+        List<String> leftWords = new ArrayList<>();
+        for (String word : words)
+            if (!CG.getUsedWords().contains(word))
+                leftWords.add(word);
+
+        CG.clearEmptyCells();
+
+        words.clear();
+        words.addAll(leftWords);
+
+        return CG;
+    }
 }
 
