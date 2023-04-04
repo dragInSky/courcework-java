@@ -11,6 +11,7 @@ public class Main {
     private static HashMap<String, Boolean> wordsWithOrientation;
 
     public static String[][] getCrossword() {
+        logic();
         return strCrossword;
     }
 
@@ -22,7 +23,11 @@ public class Main {
         return wordsWithOrientation;
     }
 
-    public static void main(String[] args) {
+    public static void logic(String[] args) {
+        logic();
+    }
+
+    private static void logic() {
 //        List<String> words = new ArrayList<>(List.of(
 //                "оса", "паук",
 //                "муха",
@@ -34,8 +39,12 @@ public class Main {
 //                "высота", "радиус", "циркуль", "диаметр", "центр", "хорда"
 //        ));
 
+//        List<String> words = new ArrayList<>(List.of(
+//                "фрезер", "фуганок", "пила", "молоток", "ножовка", "гвоздодёр", "стамеска", "топор", "рейсмус"
+//        ));
+
         List<String> words = new ArrayList<>(List.of(
-                "фрезер", "фуганок", "пила", "молоток", "ножовка", "гвоздодёр", "стамеска", "топор", "рейсмус"
+                "кот", "кран", "озеро"
         ));
 
         CrosswordGenerator ultimateCG = createCrossword(words);
