@@ -42,8 +42,8 @@ public class TestLayout extends JFrame {
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     // Вспомогательная панель
     JPanel grid = new JPanel();
-    final int N = 6;
-    final int M = 5;
+    final int N = size.y();
+    final int M = size.x();
     /*
      * Первые два параметра конструктора GridLayout определяют количество
      * строк и столбцов в таблице. Вторые 2 параметра - расстояние между
