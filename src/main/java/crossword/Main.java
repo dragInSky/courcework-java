@@ -1,33 +1,11 @@
 package crossword;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 // zdesb bil misha, on el tvoi sup i spal na tvoei krovati.
 public class Main {
-    private static String[][] strCrossword;
-    private static Tuple size;
-    private static HashMap<String, Boolean> wordsWithOrientation;
-
-    public static String[][] createCrossword() {
-        logic();
-        return strCrossword;
-    }
-
-    public static Tuple getSize() {
-        return size;
-    }
-
-    public static HashMap<String, Boolean> getWordsMap() {
-        return wordsWithOrientation;
-    }
-
-    public static void logic(String[] args) {
-        logic();
-    }
-
-    private static void logic() {
+    public static void main(String[] args) {
 //        List<String> words = new ArrayList<>(List.of(
 //                "оса", "паук",
 //                "муха",
@@ -39,41 +17,18 @@ public class Main {
 //                "высота", "радиус", "циркуль", "диаметр", "центр", "хорда"
 //        ));
 
-//        List<String> words = new ArrayList<>(List.of(
-//                "фрезер", "фуганок", "пила", "молоток", "ножовка", "гвоздодёр", "стамеска", "топор", "рейсмус"
-//        ));
-
         List<String> words = new ArrayList<>(List.of(
-                "кот", "кран", "озеро"
+                "фрезер", "фуганок", "пила", "молоток", "ножовка", "гвоздодёр", "стамеска", "топор", "рейсмус"
         ));
 
-        CrosswordGenerator ultimateCG = createCrossword(words);
+//        List<String> words = new ArrayList<>(List.of(
+//                "кот", "кран", "озеро"
+//        ));
 
-        while (!words.isEmpty())
-            ultimateCG.mergeCrosswords(createCrossword(words));
-
-        ultimateCG.crosswordPrint();
-
-        strCrossword = ultimateCG.charToStrCrossword();
-        size = ultimateCG.getSize();
-        wordsWithOrientation = ultimateCG.getWordsWithOrientation();
-    }
-
-    private static CrosswordGenerator createCrossword(List<String> words) {
-        CrosswordGenerator CG = new CrosswordGenerator(words);
-        CG.crosswordFill();
-
-        List<String> leftWords = new ArrayList<>();
-        for (String word : words)
-            if (!CG.getUsedWords().contains(word))
-                leftWords.add(word);
-
-        CG.clearEmptyCells();
-
-        words.clear();
-        words.addAll(leftWords);
-
-        return CG;
+        MultiCrossword MC = MultiCrossword.getInstance(words);
+        String[][] crossword = MC.getCrossword();
+        Tuple size = MC.getSize();
+        List<Word> wordsInformation = MC.getWordsInformation();
     }
 }
 

@@ -5,12 +5,17 @@ import static Graphic.AdditionalClasses.DeleteActionWrapper.removeBEEP;
 import Graphic.AdditionalClasses.JTextFieldLimit;
 import Graphic.Handlers.EventButtonHandler;
 import Graphic.Handlers.EventKeyboardHadler;
-import crossword.Main;
+import crossword.MultiCrossword;
+import crossword.Tuple;
+import crossword.Word;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -23,7 +28,14 @@ public class TestLayout extends JFrame {
 
   public TestLayout() throws InterruptedException {
     super("GridLayoutTest");
-    String[][] crossword = Main.createCrossword();
+
+    List<String> words = new ArrayList<>(List.of(
+            "фрезер", "фуганок", "пила", "молоток", "ножовка", "гвоздодёр", "стамеска", "топор", "рейсмус"
+    ));
+    MultiCrossword MC = MultiCrossword.getInstance(words);
+    String[][] crossword = MC.getCrossword();
+    Tuple size = MC.getSize();
+    List<Word> wordsInformation = MC.getWordsInformation();
 
     setSize(520, 520);
     setLocation(500, 100);
