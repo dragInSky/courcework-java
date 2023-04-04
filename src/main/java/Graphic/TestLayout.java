@@ -62,23 +62,26 @@ public class TestLayout extends JFrame {
     new EventKeyboardHadler().handleEventFromKeyboard(crossword, N, M, cells);
 
     JButton sendAnswers = new JButton("Проверить ответы!");
-    //new EventButtonHandler().handleEventFromButtonClickToSendAnswers(crossword, N, M, cells,
-    //    sendAnswers);
-    //grid.add(cellsField, constraints);
+
+    new EventButtonHandler().handleEventFromButtonClickToSendAnswers(crossword, N, M, cells,
+        sendAnswers);
+
     constraints.ipady = 45;   // кнопка высокая
     constraints.weightx = 0.0;
     constraints.gridwidth = 2;
-    constraints.gridx = M / 2;
+    constraints.gridx = M / 2 - 1;
     constraints.gridy = N;
     //constraints.insets = new Insets(0, 0, 0, 0);
 
     grid.add(sendAnswers, constraints);
-    constraints.gridy = N + 2;
-    constraints.gridx = 0;
-    grid.add(new JLabel("Описания слов по вертикали"), constraints);
-    constraints.gridy = N + 2;
-    constraints.gridx = M - 1;
-    grid.add(new JLabel("Описания слов по горизонтали"), constraints);
+    //JTextField leftDescription = new JTextField("Описание слов по вертикали");
+    //constraints.gridy = 0;
+    //constraints.gridx = M;
+    //grid.add(leftDescription, constraints);
+    //constraints.gridy = 0;
+    //constraints.gridx = M + 1;
+    //JTextField rightDescription = new JTextField("Описание слов по горизонтали");
+    //grid.add(new JTextField(6), constraints);
     // Размещаем нашу панель в панели содержимого
     getContentPane().add(grid);
     // Устанавливаем оптимальный размер окна
@@ -93,7 +96,7 @@ public class TestLayout extends JFrame {
       final JPanel grid, final GridBagConstraints constraints) {
     for (int i = 0; i < N; i++) {
       for (int j = 0; j < M; j++) {
-        final JTextField inputCEll = new JTextField(5);
+        final JTextField inputCEll = new JTextField(6);
         inputCEll.setDocument(new JTextFieldLimit(1));
         removeBEEP(inputCEll);
         if (!crossword[i][j].equals("_")) {
