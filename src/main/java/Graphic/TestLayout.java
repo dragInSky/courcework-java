@@ -23,7 +23,7 @@ public class TestLayout extends JFrame {
 
   public TestLayout() throws InterruptedException {
     super("GridLayoutTest");
-    String[][] crossword = Main.getCrossword();
+    String[][] crossword = Main.createCrossword();
 
     setSize(520, 520);
     setLocation(500, 100);

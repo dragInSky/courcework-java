@@ -10,7 +10,7 @@ public class Main {
     private static Tuple size;
     private static HashMap<String, Boolean> wordsWithOrientation;
 
-    public static String[][] getCrossword() {
+    public static String[][] createCrossword() {
         logic();
         return strCrossword;
     }
