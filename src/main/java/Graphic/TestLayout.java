@@ -7,8 +7,13 @@ import Graphic.Handlers.EventButtonHandler;
 import Graphic.Handlers.EventKeyboardHadler;
 import crossword.Main;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import javax.swing.JButton;
@@ -20,78 +25,89 @@ import javax.swing.JTextField;
 
 public class TestLayout extends JFrame {
 
+  public void setSizeOfMainFrame(final JFrame frame) {
+    Dimension currentScreen = Toolkit.getDefaultToolkit().getScreenSize();
+    int x = (int) ((currentScreen.getWidth()) / 1.2);
+    int y = (int) ((currentScreen.getHeight()) / 1.2);
+    frame.setSize(x, y);
+  }
+
+  public void centerFrame(final JFrame frame) {
+    Dimension currentScreen = Toolkit.getDefaultToolkit().getScreenSize();
+    int x = (int) ((currentScreen.getWidth() - frame.getWidth()) / 2);
+    int y = (int) ((currentScreen.getHeight() - frame.getHeight()) / 2);
+    frame.setLocation(x, y);
+  }
 
   public TestLayout() throws InterruptedException {
     super("GridLayoutTest");
     String[][] crossword = Main.createCrossword();
+    final int M = Main.getSize().x();
+    final int N = Main.getSize().y();
 
-    setSize(520, 520);
-    setLocation(500, 100);
+    setSizeOfMainFrame(this);
+    centerFrame(this);
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     // Вспомогательная панель
     JPanel grid = new JPanel();
-    final int N = 6;
-    final int M = 5;
-    /*
-     * Первые два параметра конструктора GridLayout определяют количество
-     * строк и столбцов в таблице. Вторые 2 параметра - расстояние между
-     * ячейками по горизонтали и вертикали
-     */
-    GridLayout layout = new GridLayout(3, 0, 5, 12);
-    grid.setLayout(layout);
-    JPanel grid1 = new JPanel();
-    JPanel grid2 = new JPanel();
-    JPanel grid3 = new JPanel();
-    GridLayout layout1 = new GridLayout(N, M, 0, 0);
-    GridLayout layout2 = new GridLayout(0, 2, 5, 12);
-    grid1.setLayout(layout1);
-    grid2.setLayout(layout2);
-    grid3.setLayout(new GridLayout(1, 0, 0, 0));
+
+    grid.setLayout(new GridBagLayout());
+    GridBagConstraints constraints = new GridBagConstraints();
     JTextField[][] cells = new JTextField[N][M];
     //заполняем массив клеток
-    fillTheCells(crossword, N, M, cells, grid1);
+    //final JPanel cellsField = new JPanel();
+    //cellsField.setLayout(new GridBagLayout());
+    fillTheCells(crossword, N, M, cells, grid, constraints);
     //на все нечерные кнопочки добавляем событие
     new EventKeyboardHadler().handleEventFromKeyboard(crossword, N, M, cells);
 
     JButton sendAnswers = new JButton("Проверить ответы!");
-    new EventButtonHandler().handleEventFromButtonClickToSendAnswers(crossword, N, M, cells,
-        sendAnswers);
-    grid3.add(sendAnswers);
-    grid.add(grid1);
-    grid.add(grid3);
-    grid2.add(new JLabel("Описания слов по вертикали"));
-    grid2.add(new JLabel("Описания слов по горизонтали"));
-    grid.add(grid2);
+    //new EventButtonHandler().handleEventFromButtonClickToSendAnswers(crossword, N, M, cells,
+    //    sendAnswers);
+    //grid.add(cellsField, constraints);
+    constraints.ipady = 45;   // кнопка высокая
+    constraints.weightx = 0.0;
+    constraints.gridwidth = 2;
+    constraints.gridx = M / 2;
+    constraints.gridy = N;
+    //constraints.insets = new Insets(0, 0, 0, 0);
+
+    grid.add(sendAnswers, constraints);
+    constraints.gridy = N + 2;
+    constraints.gridx = 0;
+    grid.add(new JLabel("Описания слов по вертикали"), constraints);
+    constraints.gridy = N + 2;
+    constraints.gridx = M - 1;
+    grid.add(new JLabel("Описания слов по горизонтали"), constraints);
     // Размещаем нашу панель в панели содержимого
     getContentPane().add(grid);
     // Устанавливаем оптимальный размер окна
     pack();
     // Открываем окно
     setVisible(true);
-    Field[] fields = java.awt.event.KeyEvent.class.getDeclaredFields();
-    for (Field f : fields) {
-      if (Modifier.isStatic(f.getModifiers())) {
-        System.out.println(f.getName());
-      }
-    }
+
   }
 
   public void fillTheCells(final String[][] crossword,
       final int N, final int M, final JTextField[][] cells,
-      final JPanel grid1) {
+      final JPanel grid, final GridBagConstraints constraints) {
     for (int i = 0; i < N; i++) {
       for (int j = 0; j < M; j++) {
-        final JTextField inputCEll = new JTextField();
+        final JTextField inputCEll = new JTextField(5);
         inputCEll.setDocument(new JTextFieldLimit(1));
         removeBEEP(inputCEll);
         if (!crossword[i][j].equals("_")) {
-          inputCEll.setFont(new Font("Serif", Font.BOLD, 25));
+          inputCEll.setFont(new Font("Serif", Font.BOLD, 15));
         } else {
+          inputCEll.setFont(new Font("Serif", Font.BOLD, 15));
           inputCEll.setBackground(Color.BLACK);
           //туда нельзя ходить
         }
         cells[i][j] = inputCEll;
-        grid1.add(inputCEll);
+        constraints.gridx = j;
+        constraints.gridy = i;
+
+        grid.add(inputCEll, constraints);
       }
 
     }
