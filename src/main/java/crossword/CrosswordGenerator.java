@@ -29,6 +29,8 @@ public class CrosswordGenerator {
                 crossword[i][j] = '_';
 
         appendHorizontal(words.get(0), wordsLen, wordsLen);
+        crosswordFill();
+        clearEmptyCells();
     }
 
     public Tuple getSize() {
@@ -217,15 +219,14 @@ public class CrosswordGenerator {
         List<String> secondUsedWords = CG.getUsedWords();
         List<Boolean> secondOrientation = CG.getOrientation();
 
-        for (int i = 0, size = secondUsedWords.size(); i < size; i++)
+        for (int i = 0, size = secondUsedWords.size(); i < size; i++) {
+            Tuple secondPos = CG.absWordPos(secondUsedWords.get(i), secondOrientation.get(i));
             wordsInformation.add(new Word(
                     secondUsedWords.get(i),
                     secondOrientation.get(i),
-                    new Tuple(
-                            CG.absWordPos(secondUsedWords.get(i), secondOrientation.get(i)).x(),
-                            CG.absWordPos(secondUsedWords.get(i), secondOrientation.get(i)).y() + height + 1
-                    )
-            ));
+                    new Tuple(secondPos.x(), secondPos.y() + height + 1))
+            );
+        }
 
         int newLen = Math.max(len, CG.len);
         int newHeight = height + CG.height + 1;

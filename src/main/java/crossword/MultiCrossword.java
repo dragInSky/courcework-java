@@ -13,7 +13,7 @@ public class MultiCrossword {
         while (!words.isEmpty())
             CG.mergeCrosswords(createCrossword(words));
 
-        CG.crosswordPrint();
+//        CG.crosswordPrint();
     }
 
     public Tuple getSize() {
@@ -36,14 +36,11 @@ public class MultiCrossword {
 
     private static CrosswordGenerator createCrossword(List<String> words) {
         CrosswordGenerator secondaryCG = new CrosswordGenerator(words);
-        secondaryCG.crosswordFill();
 
         List<String> leftWords = new ArrayList<>();
         for (String word : words)
             if (!secondaryCG.getUsedWords().contains(word))
                 leftWords.add(word);
-
-        secondaryCG.clearEmptyCells();
 
         words.clear();
         words.addAll(leftWords);
