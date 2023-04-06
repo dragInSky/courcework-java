@@ -17,11 +17,13 @@ import java.awt.Toolkit;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 
 public class GamePanel extends JFrame {
@@ -40,7 +42,7 @@ public class GamePanel extends JFrame {
     frame.setLocation(x, y);
   }
 
-  public GamePanel() throws InterruptedException {
+  public GamePanel() throws InterruptedException, BadLocationException {
     super("Кроссворд");
     String[][] crossword = Main.createCrossword();
     JLabel testLabel = new JLabel(
@@ -77,15 +79,9 @@ public class GamePanel extends JFrame {
     JPanel rightPanel = new JPanel(new GridLayout(2, 0));
     JPanel topRightPanel = new JPanel(new GridLayout(0, 2));
 
-    //JTextField leftDescription = new JTextF//ield("Описание слов по вертикали");
-
-    JList leftList = new JList(descriptionsVertical);
-    JScrollPane scroller = new JScrollPane(leftList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-    topRightPanel.add(scroller);
+    topRightPanel.add(this.anotherWay());
     JTextField rightDescription = new JTextField("Описание слов по горизонтали");
-    topRightPanel.add(rightDescription);
+    topRightPanel.add(this.anotherWay());
 
     rightPanel.add(topRightPanel);
     // Размещаем нашу панель в панели содержимого
@@ -124,8 +120,31 @@ public class GamePanel extends JFrame {
   }
 
 
-  public static void main(String[] args) throws InterruptedException {
+  public static void main(String[] args) throws InterruptedException, BadLocationException {
     new GamePanel();
+  }
+
+  public JScrollPane anotherWay() throws BadLocationException {
+    JTextPane textPane = new JTextPane();
+    Font font = new Font("Times New Roman", Font.ITALIC, 22);
+    textPane.setFont(font);
+    SimpleAttributeSet attributeSet = new SimpleAttributeSet();
+    StyleConstants.setItalic(attributeSet, true);
+    StyleConstants.setForeground(attributeSet, Color.blue);
+    StyleConstants.setBackground(attributeSet, Color.white);
+    textPane.setCharacterAttributes(attributeSet, true);
+    textPane.setText("Описание слов по вертикали"
+        + "\n1)This is demo text4.This is demo text5. This is demo text6. "
+        + "\n2)This is demo text7. This is demo text8. This is demo text9. "
+        + "\n3)This is demo text10. This is demo text11. This is demo text12."
+        + "\n4)This is demo text13. This is demo text13. This is demo text14."
+        + "\n5)This is demo text15. This is demo text13. This is demo text16."
+        + "\n6)This is demo text17. This is demo text13. This is demo text18."
+        + "\n7)This is demo text19.This is demo text13.This is demo text20.");
+    JScrollPane scrollPane = new JScrollPane(textPane);
+    scrollPane.setVerticalScrollBarPolicy(
+        javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+    return scrollPane;
   }
 }
 
