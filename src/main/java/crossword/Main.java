@@ -2,33 +2,32 @@ package crossword;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
 import sitesParse.HTMLParse;
 
 // zdesb bil misha, on el tvoi sup i spal na tvoei krovati.
 public class Main {
-    private final static String dictionaryPrefix = "https://makeword.ru/dictionary/";
-    private final static String joinPrefix = "https://makeword.ru/join/";
-    private final static String relatedPrefix = "https://makeword.ru/related";
-    private final static String sentencesPrefix = "https://makeword.ru/sentences";
-    private final static String synonymPrefix = "https://makeword.ru/synonym";
-    private final static String antonymPrefix = "https://makeword.ru/antonym";
-
     public static void main(String[] args) {
-        String url = dictionaryPrefix + "asd";
-        System.out.println(HTMLParse.isWordExist(url));
-        HTMLParse.dictionary(url);
+        int count = 0;
+        while (count != 25) {
+            String word = HTMLParse.wordGeneration();
 
-        System.out.println();
+            String wordRepr = switch (ThreadLocalRandom.current().nextInt(0, 6)) {
+                case 0 -> HTMLParse.dictionary(word);
+                case 1 -> HTMLParse.join(word);
+                case 2 -> HTMLParse.related(word);
+                case 3 -> HTMLParse.sentences(word);
+                case 4 -> HTMLParse.synonym(word);
+                case 5 -> HTMLParse.antonym(word);
+                default -> null;
+            };
 
-        String url2 = dictionaryPrefix + "добро";
-        System.out.println(HTMLParse.isWordExist(url2));
-        HTMLParse.dictionary(url2);
-
-        System.out.println();
-
-        String url3 = joinPrefix + "ветер";
-        System.out.println(HTMLParse.isWordExist(url3));
-        HTMLParse.join(url3);
+            if (wordRepr != null) {
+                System.out.println("\nWord is:\t" + word + '\n' + wordRepr);
+                count++;
+            }
+        }
 
 //        List<String> words = new ArrayList<>(List.of(
 //                "оса", "паук",
