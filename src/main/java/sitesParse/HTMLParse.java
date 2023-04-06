@@ -93,7 +93,7 @@ public class HTMLParse {
 
             var definitions = page.body().selectFirst(".sentences");
 
-            return definitions != null ? "Предложения:\n" + definitions.text() : "";
+            return definitions != null ? "Предложение со словом:\t" + definitions.text() : "";
         } catch (IOException e) {
             return "";
         }

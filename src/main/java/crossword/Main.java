@@ -10,7 +10,7 @@ import sitesParse.RepresentationParse;
 public class Main {
     public static void main(String[] args) {
         int count = 0;
-        while (count != 12) {
+        while (count != 10) {
             String word = HTMLParse.wordGeneration();
 
             String wordRepr = switch (ThreadLocalRandom.current().nextInt(0, 6)) {

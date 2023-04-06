@@ -3,14 +3,25 @@ package sitesParse;
 import java.util.Objects;
 
 public class RepresentationParse {
+    private static String toReplace(String definition, String word) {
+        for (int i = 0, len = word.length(); i < 3 && len - i > len / 2; i++) {
+            String preWord = word.substring(0, len - i);
+            String repeat = "*".repeat(len - i);
+            definition = definition.replace(preWord, repeat)
+                    .replace(preWord.toLowerCase(), repeat);
+        }
+
+        return definition;
+    }
+
     public static String definitionParse(String definition, String word) {
         if (Objects.equals(definition, ""))
             return null;
 
-        definition = definition.replace(word, "*".repeat(word.length()))
-                .replace(word.toLowerCase(), "*".repeat(word.length()))
-                .replace("подробнее", "")
+        definition = definition.replace("подробнее", "")
                 .substring(definition.indexOf(" — ") + 3);
+
+        definition = RepresentationParse.toReplace(definition, word);
 
         if (definition.contains(") -"))
             definition = definition.substring(definition.indexOf(") -") + 3);
@@ -21,16 +32,14 @@ public class RepresentationParse {
                 definition = definition.substring(definition.indexOf("),") + 2);
         }
 
-        return definition.trim();
+        return "Определение:\t" + definition.trim();
     }
 
     public static String joinParse(String definition, String word) {
         if (Objects.equals(definition, ""))
             return null;
 
-        String preWord = word.substring(0, word.length() - 2);
-        definition = definition.replace(preWord, "*".repeat(word.length() - 2))
-                .replace(preWord.toLowerCase(), "*".repeat(word.length() - 2));
+        definition = RepresentationParse.toReplace(definition, word);
 
         return definition;
     }
@@ -40,8 +49,7 @@ public class RepresentationParse {
                 (!definition.contains(word) && !definition.contains(word.toLowerCase())))
             return null;
 
-        definition = definition.replace(word, "*".repeat(word.length()))
-                .replace(word.toLowerCase(), "*".repeat(word.length()));
+        definition = RepresentationParse.toReplace(definition, word);
 
         return definition.trim();
     }
