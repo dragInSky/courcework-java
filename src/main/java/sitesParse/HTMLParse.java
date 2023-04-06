@@ -19,9 +19,9 @@ public class HTMLParse {
 
             var word = page.body().selectFirst(".blok_otvet");
 
-            return word != null ? word.text() : null;
+            return word != null ? word.text() : "";
         } catch (IOException e) {
-            return null;
+            return "";
         }
     }
 
@@ -31,18 +31,17 @@ public class HTMLParse {
 
             String title = page.title();
             if (title.equals("Поиск значения слов в словарях"))
-                return null;
+                return "";
 
             var definitions = page.body().select("p");
-            StringBuilder res = new StringBuilder("Определения:\n");
 
             for (var definition : definitions)
                 if (!definition.id().isEmpty())
-                    res.append(definition).append('\n');
+                    return definition.text();
 
-            return res.toString();
+            return "";
         } catch (IOException e) {
-            return null;
+            return "";
         }
     }
 
@@ -52,16 +51,16 @@ public class HTMLParse {
 
             String title = page.title();
             if (title.equals("Cочетаемость слов"))
-                return null;
+                return "";
 
             var definitions = page.body().select(".cut");
             StringBuilder res = new StringBuilder("Сочетаемость:\t");
-            for (int i = 0; i < 10 && i < definitions.size(); i++)
+            for (int i = 0; i < 5 && i < definitions.size(); i++)
                 res.append(definitions.get(i).text()).append("; ");
 
-            return res.toString();
+            return res.substring(0, res.length() - 2) + ".";
         } catch (IOException e) {
-            return null;
+            return "";
         }
     }
 
@@ -82,7 +81,7 @@ public class HTMLParse {
             for (int i = 0; i < 5 && i < definitions2.size(); i++)
                 res.append(definitions2.get(i).text()).append("; ");
 
-            return res.toString();
+            return res.substring(0, res.length() - 2) + ".";
         } catch (IOException e) {
             return null;
         }
@@ -92,15 +91,11 @@ public class HTMLParse {
         try {
             var page = Jsoup.connect(sentencesPrefix + word).get();
 
-            var definitions = page.body().select(".sentences");
-            StringBuilder res = new StringBuilder("Предложения:\n");
-            for (int i = 0; i < 6 && i < definitions.size(); i++)
-                if (i % 2 == 0)
-                    res.append(definitions.get(i).text()).append('\n');
+            var definitions = page.body().selectFirst(".sentences");
 
-            return res.toString();
+            return definitions != null ? "Предложения:\n" + definitions.text() : "";
         } catch (IOException e) {
-            return null;
+            return "";
         }
     }
 
@@ -114,10 +109,10 @@ public class HTMLParse {
 
             var definitions = page.body().select(".cut");
             StringBuilder res = new StringBuilder("Синонимы:\t");
-            for (int i = 0; i < 10 && i < definitions.size(); i++)
+            for (int i = 0; i < 5 && i < definitions.size(); i++)
                 res.append(definitions.get(i).text()).append("; ");
 
-            return res.toString();
+            return res.substring(0, res.length() - 2) + ".";
         } catch (IOException e) {
             return null;
         }
@@ -132,8 +127,11 @@ public class HTMLParse {
                 return null;
 
             var definitions = page.body().select(".cut");
+            StringBuilder res = new StringBuilder("Антонимы:\t");
+            for (int i = 0; i < 5 && i < definitions.size(); i++)
+                res.append(definitions.get(i).text()).append("; ");
 
-            return "Антоним:\t" + definitions.text();
+            return res.substring(0, res.length() - 2) + ".";
         } catch (IOException e) {
             return null;
         }
