@@ -5,10 +5,11 @@ import java.awt.Toolkit;
 import javax.swing.JFrame;
 
 public class ScreenSettingsManager {
+
   public void setSizeOfMainFrame(final JFrame frame) {
     Dimension currentScreen = Toolkit.getDefaultToolkit().getScreenSize();
-    int x = (int) ((currentScreen.getWidth()) / 1.5);
-    int y = (int) ((currentScreen.getHeight()) / 1.5);
+    int x = (int) ((currentScreen.getWidth()) / 1.1);
+    int y = (int) ((currentScreen.getHeight()) / 1.1);
     frame.setSize(x, y);
   }
 

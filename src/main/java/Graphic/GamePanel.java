@@ -8,8 +8,11 @@ import Graphic.Handlers.EventButtonHandler;
 import Graphic.Handlers.EventKeyboardHadler;
 import Graphic.Handlers.ScreenSettingsManager;
 import Graphic.Handlers.ScrollManager;
-import crossword.Main;
+import crossword.Tuple;
+import crossword.Word;
+import generation.Generator;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -18,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,10 +34,17 @@ import javax.swing.text.BadLocationException;
 
 public class GamePanel extends JFrame {
 
+  private static final StringBuilder verticalDescription = new StringBuilder();
+  private static final StringBuilder gorizontalDescription = new StringBuilder();
 
   public GamePanel() throws InterruptedException, BadLocationException {
     super("Кроссворд");
-    String[][] crossword = Main.createCrossword();
+
+    Generator generator = Generator.getInstance();
+    String[][] crossword = generator.getCrossword();
+    Tuple size = generator.getSize();
+    List<Word> wordsInformation = generator.getWordsInformation();
+
     JLabel testLabel = new JLabel(
         "1)эластичный продольный тяж, который является осевым скелетом предковых и некоторых современных форм животных организмов.");
     String[] descriptionsVertical = {
@@ -41,8 +52,8 @@ public class GamePanel extends JFrame {
         "2)инструмент для черчения окружностей и дуг, также может быть использован для измерения расстояний, в частности, на картах.",
         "3)отрезок, соединяющий центр окружности (или сферы) с любой точкой, лежащей на окружности (или сфере), а также длина этого отрезка. Радиус составляет половину диаметра.",
         "4)отрезок, соединяющий две точки на окружности и проходящий через центр окружности, а также длина этого отрезка"};
-    final int M = Main.getSize().x();
-    final int N = Main.getSize().y();
+    final int M = size.x();
+    final int N = size.y();
 
     ScreenSettingsManager screenSettingsManager = new ScreenSettingsManager();
     screenSettingsManager.setSizeOfMainFrame(this);
@@ -57,6 +68,7 @@ public class GamePanel extends JFrame {
     GridBagConstraints constraints = new GridBagConstraints();
     JTextField[][] cells = new JTextField[N][M];
     fillTheCells(crossword, N, M, cells, crosswordPanel, constraints);
+    fillDescriptions(wordsInformation, cells);
     new EventKeyboardHadler().handleEventFromKeyboard(crossword, N, M, cells);
 
     JButton sendAnswers = BeautifulButton.getInstance();
@@ -69,9 +81,10 @@ public class GamePanel extends JFrame {
     JPanel bottomRightPanel = new JPanel(new GridLayout(0, 2));
 
     ScrollManager scrollManager = new ScrollManager();
-    topRightPanel.add(scrollManager.getScrollerOnDescriptionPanels("Описание слов по вертикали"));
     topRightPanel.add(
-        scrollManager.getScrollerOnDescriptionPanels("Описание слов по горизонатали"));
+        scrollManager.getScrollerOnDescriptionPanels(GamePanel.verticalDescription.toString()));
+    topRightPanel.add(
+        scrollManager.getScrollerOnDescriptionPanels(GamePanel.gorizontalDescription.toString()));
 
     bottomRightPanel.add(sendAnswers);
     bottomRightPanel.add(getTimePanel());
@@ -81,6 +94,7 @@ public class GamePanel extends JFrame {
     mainGrid.add(crosswordPanel);
     mainGrid.add(rightPanel);
     getContentPane().add(mainGrid);
+    //pack();
     setVisible(true);
   }
 
@@ -110,20 +124,38 @@ public class GamePanel extends JFrame {
 
   public JLabel getTimePanel() {
     final JLabel timeDisplayer = new JLabel("", SwingConstants.CENTER);
-    timeDisplayer.setFont(new Font("Agency FB", Font.BOLD, 30));
-    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+    timeDisplayer.setFont(new Font("Arial", Font.BOLD, 23));
 
-    Timer t = new Timer(1000, new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        timeDisplayer.setText(sdf.format(new Date()));
+    Timer timer = new Timer(1000, e -> {
+      if (count > 0) {
+        timeDisplayer.setText("Осталось " + count-- + " сек");
+      } else {
+        timeDisplayer.setText("Game over");
       }
     });
-    t.start();
+    timer.start();
     return timeDisplayer;
 
   }
+
+  public void fillDescriptions(List<Word> wordsInformation, JTextField[][] cells) {
+    int count = 0;
+    for (Word word : wordsInformation) {
+      boolean orient = word.orientation();
+      if (orient) {
+        gorizontalDescription.append("Описание слов по горизонтали\n").append(++count).append(") ")
+            .append(
+                word.repr());
+      } else {
+        verticalDescription.append("Описание слов по вертикали\n").append(++count).append(") ")
+            .append(
+                word.repr());
+      }
+      cells[word.tuple().y()][word.tuple().x()].setText(String.valueOf(count));
+    }
+  }
+
+  private volatile int count = 180;
 
 
   public static void main(String[] args) throws InterruptedException, BadLocationException {
