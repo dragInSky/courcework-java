@@ -1,25 +1,19 @@
 package crossword;
 
-
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
 public class CrosswordGenerator {
     private int len, height;
-    private int startX, startY, endX, endY;
-
-    private final List<String> usedWords = new ArrayList<>();
-    private final List<Boolean> orientation = new ArrayList<>();
     private final List<String> words;
-    private final HashMap<String, Boolean> wordsWithOrientation = new HashMap<>();
+    private final List<Word> wordsInformation = new ArrayList<>();
     private char[][] crossword;
 
     public CrosswordGenerator(List<String> words) {
         this.words = words;
-        this.words.sort(Comparator.comparingInt(String::length));
+        this.words.sort(Comparator.comparingInt(String::length).reversed());
 
         int wordsLen = 0;
         for (String word : words)
@@ -35,29 +29,33 @@ public class CrosswordGenerator {
                 crossword[i][j] = '_';
 
         appendHorizontal(words.get(0), wordsLen, wordsLen);
+        crosswordFill();
+        clearEmptyCells();
     }
 
     public Tuple getSize() {
         return new Tuple(len, height);
     }
 
+    public List<Word> getWordsInformation() {
+        return wordsInformation;
+    }
+
     public List<String> getUsedWords() {
+        List<String> usedWords = new ArrayList<>();
+        for (Word word : wordsInformation)
+            usedWords.add(word.word());
         return usedWords;
     }
 
-    public List<Boolean> getOrientation() {
+    private List<Boolean> getOrientation() {
+        List<Boolean> orientation = new ArrayList<>();
+        for (Word word : wordsInformation)
+            orientation.add(word.orientation());
         return orientation;
     }
 
-    public HashMap<String, Boolean> getWordsWithOrientation() {
-        return wordsWithOrientation;
-    }
-
-    public char[][] getCrossword() {
-        return crossword;
-    }
-
-    public String[][] charToStrCrossword() {
+    public String[][] getCrossword() {
         String[][] strCrossword = new String[height][len];
         for (int i = 0; i < height; i++)
             for (int j = 0; j < len; j++)
@@ -67,17 +65,17 @@ public class CrosswordGenerator {
     }
 
     private void appendHorizontal(String word, int posX, int posY) {
-        addWordWithOrientation(word, true);
-
         for (int idx = 0; idx < word.length(); idx++)
             crossword[posY][posX + idx] = word.charAt(idx);
+
+        wordsInformation.add(new Word(word, true, absWordPos(word, true), ""));
     }
 
     private void appendVertical(String word, int posX, int posY) {
-        addWordWithOrientation(word, false);
-
         for (int idx = 0; idx < word.length(); idx++)
             crossword[posY + idx][posX] = word.charAt(idx);
+
+        wordsInformation.add(new Word(word, false, absWordPos(word, false), ""));
     }
 
     private boolean isHorizontalAccessible(String word, int posX, int posY) {
@@ -103,20 +101,18 @@ public class CrosswordGenerator {
     }
 
     private Tuple absWordPos(String word, boolean prevWordOrient) {
-        fillLimits();
-
         int count = 0;
         if (prevWordOrient) {
-            for (int i = startY; i < endY; i++)
-                for (int j = startX; j < endX; j++) {
+            for (int i = 0; i < height; i++)
+                for (int j = 0; j < len; j++) {
                     if (crossword[i][j] == word.charAt(count)) count++;
                     else count = 0;
                     if (count == word.length())
                         return new Tuple(j - count + 1, i);
                 }
         } else {
-            for (int j = startX; j < endX; j++)
-                for (int i = startY; i < endY; i++) {
+            for (int j = 0; j < len; j++)
+                for (int i = 0; i < height; i++) {
                     if (crossword[i][j] == word.charAt(count)) count++;
                     else count = 0;
                     if (count == word.length())
@@ -129,11 +125,11 @@ public class CrosswordGenerator {
 
     public void crosswordFill() {
         for (String word : words) {
-            if (!usedWords.contains(word))
+            if (!getUsedWords().contains(word))
                 continue;
 
             for (String secondWord : words)
-                if (!usedWords.contains(secondWord) && !Objects.equals(word, secondWord))
+                if (!getUsedWords().contains(secondWord) && !Objects.equals(word, secondWord))
                     for (int i = 0; i < word.length(); i++) {
                         char sym = word.charAt(i);
                         int secondWordSameCharPos = secondWord.indexOf(sym);
@@ -141,18 +137,18 @@ public class CrosswordGenerator {
                         if (secondWordSameCharPos == -1)
                             continue;
 
-                        boolean prevWordOrient = orientation.get(usedWords.indexOf(word));
+                        boolean prevWordOrient = getOrientation().get(getUsedWords().indexOf(word));
 
-                        Tuple tuple = absWordPos(word, prevWordOrient);
+                        Tuple wordPos = absWordPos(word, prevWordOrient);
 
                         if (prevWordOrient) {
-                            int posX = tuple.x() + i;
-                            int posY = tuple.y() - secondWordSameCharPos;
+                            int posX = wordPos.x() + i;
+                            int posY = wordPos.y() - secondWordSameCharPos;
                             if (isVerticalAccessible(secondWord, posX, posY))
                                 appendVertical(secondWord, posX, posY);
                         } else {
-                            int posX = tuple.x() - secondWordSameCharPos;
-                            int posY = tuple.y() + i;
+                            int posX = wordPos.x() - secondWordSameCharPos;
+                            int posY = wordPos.y() + i;
                             if (isHorizontalAccessible(secondWord, posX, posY))
                                 appendHorizontal(secondWord, posX, posY);
                         }
@@ -160,12 +156,6 @@ public class CrosswordGenerator {
                         break;
                     }
         }
-    }
-
-    private void addWordWithOrientation(String word, boolean curOrient) {
-        usedWords.add(word);
-        orientation.add(curOrient);
-        wordsWithOrientation.put(word, curOrient);
     }
 
     public void crosswordPrint() {
@@ -176,46 +166,49 @@ public class CrosswordGenerator {
         }
     }
 
-    public void strCrosswordPrint(String[][] strCrossword) {
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < len; j++)
-                System.out.print(strCrossword[i][j] + " ");
-            System.out.println();
-        }
-    }
-
-    private void fillLimits() {
-        boolean flagX = true, flagY = true;
+    private Tuple fillLimits() {
+        int startX = -1, startY = -1, endX = -1, endY = -1;
         for (int i = 0; i < height; i++)
             for (int j = 0; j < len; j++) {
                 if (crossword[i][j] != '_') {
-                    if (flagY) {
+                    if (startY == -1)
                         startY = i;
-                        flagY = false;
-                    }
                     endY = i + 1;
                 }
 
                 if (crossword[j][i] != '_') {
-                    if (flagX) {
+                    if (startX == -1)
                         startX = i;
-                        flagX = false;
-                    }
                     endX = i + 1;
                 }
             }
-    }
-
-    public void clearEmptyCells() {
-        fillLimits();
 
         len = endX - startX;
         height = endY - startY;
 
+        return new Tuple(startX, startY);
+    }
+
+    public void clearEmptyCells() {
+        Tuple startPos = fillLimits();
+
+        for (int i = 0; i < wordsInformation.size(); i++) {
+            Word wordInformation = wordsInformation.get(i);
+            if (words.contains(wordInformation.word())) {
+                Tuple pos = wordInformation.tuple();
+                wordsInformation.set(i, new Word(
+                        wordInformation.word(),
+                        wordInformation.orientation(),
+                        new Tuple(pos.x() - startPos.x(), pos.y() - startPos.y()),
+                        ""
+                ));
+            }
+        }
+
         char[][] newCrossword = new char[height][len];
 
         for (int i = 0; i < height; i++)
-            System.arraycopy(crossword[i + startY], startX, newCrossword[i], 0, len);
+            System.arraycopy(crossword[i + startPos.y()], startPos.x(), newCrossword[i], 0, len);
 
         crossword = newCrossword;
     }
@@ -224,20 +217,23 @@ public class CrosswordGenerator {
         if (this == CG)
             return;
 
-
         List<String> secondUsedWords = CG.getUsedWords();
         List<Boolean> secondOrientation = CG.getOrientation();
 
-        usedWords.addAll(secondUsedWords);
-        orientation.addAll(secondOrientation);
-        for (int i = 0, size = secondUsedWords.size(); i < size; i++)
-            wordsWithOrientation.put(secondUsedWords.get(i), secondOrientation.get(i));
+        for (int i = 0, size = secondUsedWords.size(); i < size; i++) {
+            Tuple secondPos = CG.absWordPos(secondUsedWords.get(i), secondOrientation.get(i));
+            wordsInformation.add(new Word(
+                    secondUsedWords.get(i),
+                    secondOrientation.get(i),
+                    new Tuple(secondPos.x(), secondPos.y() + height + 1),
+                    "")
+            );
+        }
 
         int newLen = Math.max(len, CG.len);
         int newHeight = height + CG.height + 1;
 
         char[][] newCrossword = new char[newHeight][newLen];
-        char[][] secondCrossword = CG.getCrossword();
 
         for (int i = 0; i < newHeight; i++)
             for (int j = 0; j < newLen; j++)
@@ -246,7 +242,7 @@ public class CrosswordGenerator {
                 else if (i == height)
                     newCrossword[i][j] = '_';
                 else
-                    newCrossword[i][j] = (j < CG.len) ? secondCrossword[i - height - 1][j] : '_';
+                    newCrossword[i][j] = (j < CG.len) ? CG.crossword[i - height - 1][j] : '_';
 
         len = newLen;
         height = newHeight;
