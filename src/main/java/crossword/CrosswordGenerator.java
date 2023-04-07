@@ -68,14 +68,14 @@ public class CrosswordGenerator {
         for (int idx = 0; idx < word.length(); idx++)
             crossword[posY][posX + idx] = word.charAt(idx);
 
-        wordsInformation.add(new Word(word, true, absWordPos(word, true)));
+        wordsInformation.add(new Word(word, true, absWordPos(word, true), ""));
     }
 
     private void appendVertical(String word, int posX, int posY) {
         for (int idx = 0; idx < word.length(); idx++)
             crossword[posY + idx][posX] = word.charAt(idx);
 
-        wordsInformation.add(new Word(word, false, absWordPos(word, false)));
+        wordsInformation.add(new Word(word, false, absWordPos(word, false), ""));
     }
 
     private boolean isHorizontalAccessible(String word, int posX, int posY) {
@@ -199,7 +199,8 @@ public class CrosswordGenerator {
                 wordsInformation.set(i, new Word(
                         wordInformation.word(),
                         wordInformation.orientation(),
-                        new Tuple(pos.x() - startPos.x(), pos.y() - startPos.y())
+                        new Tuple(pos.x() - startPos.x(), pos.y() - startPos.y()),
+                        ""
                 ));
             }
         }
@@ -224,7 +225,8 @@ public class CrosswordGenerator {
             wordsInformation.add(new Word(
                     secondUsedWords.get(i),
                     secondOrientation.get(i),
-                    new Tuple(secondPos.x(), secondPos.y() + height + 1))
+                    new Tuple(secondPos.x(), secondPos.y() + height + 1),
+                    "")
             );
         }
 

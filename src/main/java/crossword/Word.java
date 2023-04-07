@@ -1,4 +1,4 @@
 package crossword;
 
-public record Word(String word, boolean orientation, Tuple tuple) {
+public record Word(String word, boolean orientation, Tuple tuple, String repr) {
 }
