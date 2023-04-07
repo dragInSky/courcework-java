@@ -6,41 +6,30 @@ import Graphic.AdditionalClasses.BeautifulButton;
 import Graphic.AdditionalClasses.JTextFieldLimit;
 import Graphic.Handlers.EventButtonHandler;
 import Graphic.Handlers.EventKeyboardHadler;
+import Graphic.Handlers.ScreenSettingsManager;
+import Graphic.Handlers.ScrollManager;
 import crossword.Main;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
 
 
 public class GamePanel extends JFrame {
 
-  public void setSizeOfMainFrame(final JFrame frame) {
-    Dimension currentScreen = Toolkit.getDefaultToolkit().getScreenSize();
-    int x = (int) ((currentScreen.getWidth()) / 1.5);
-    int y = (int) ((currentScreen.getHeight()) / 1.5);
-    frame.setSize(x, y);
-  }
-
-  public void centerFrame(final JFrame frame) {
-    Dimension currentScreen = Toolkit.getDefaultToolkit().getScreenSize();
-    int x = (int) ((currentScreen.getWidth() - frame.getWidth()) / 2);
-    int y = (int) ((currentScreen.getHeight() - frame.getHeight()) / 2);
-    frame.setLocation(x, y);
-  }
 
   public GamePanel() throws InterruptedException, BadLocationException {
     super("Кроссворд");
@@ -55,10 +44,11 @@ public class GamePanel extends JFrame {
     final int M = Main.getSize().x();
     final int N = Main.getSize().y();
 
-    setSizeOfMainFrame(this);
-    centerFrame(this);
+    ScreenSettingsManager screenSettingsManager = new ScreenSettingsManager();
+    screenSettingsManager.setSizeOfMainFrame(this);
+    screenSettingsManager.centerFrame(this);
+
     setDefaultCloseOperation(EXIT_ON_CLOSE);
-    // Вспомогательная панель
     JPanel mainGrid = new JPanel(new GridLayout(0, 2, 0, 0));
 
     JPanel crosswordPanel = new JPanel();
@@ -67,7 +57,6 @@ public class GamePanel extends JFrame {
     GridBagConstraints constraints = new GridBagConstraints();
     JTextField[][] cells = new JTextField[N][M];
     fillTheCells(crossword, N, M, cells, crosswordPanel, constraints);
-    //на все нечерные кнопочки добавляем событие
     new EventKeyboardHadler().handleEventFromKeyboard(crossword, N, M, cells);
 
     JButton sendAnswers = BeautifulButton.getInstance();
@@ -75,23 +64,23 @@ public class GamePanel extends JFrame {
     new EventButtonHandler().handleEventFromButtonClickToSendAnswers(crossword, N, M, cells,
         sendAnswers);
 
-    //grid1.add(sendAnswers, constraints);
     JPanel rightPanel = new JPanel(new GridLayout(2, 0));
     JPanel topRightPanel = new JPanel(new GridLayout(0, 2));
+    JPanel bottomRightPanel = new JPanel(new GridLayout(0, 2));
 
-    topRightPanel.add(this.anotherWay());
-    JTextField rightDescription = new JTextField("Описание слов по горизонтали");
-    topRightPanel.add(this.anotherWay());
+    ScrollManager scrollManager = new ScrollManager();
+    topRightPanel.add(scrollManager.getScrollerOnDescriptionPanels("Описание слов по вертикали"));
+    topRightPanel.add(
+        scrollManager.getScrollerOnDescriptionPanels("Описание слов по горизонатали"));
+
+    bottomRightPanel.add(sendAnswers);
+    bottomRightPanel.add(getTimePanel());
 
     rightPanel.add(topRightPanel);
-    // Размещаем нашу панель в панели содержимого
-    rightPanel.add(sendAnswers);
+    rightPanel.add(bottomRightPanel);
     mainGrid.add(crosswordPanel);
     mainGrid.add(rightPanel);
     getContentPane().add(mainGrid);
-    // Устанавливаем оптимальный размер окна
-    //pack();
-    // Открываем окно
     setVisible(true);
   }
 
@@ -119,32 +108,28 @@ public class GamePanel extends JFrame {
     }
   }
 
+  public JLabel getTimePanel() {
+    final JLabel timeDisplayer = new JLabel("", SwingConstants.CENTER);
+    timeDisplayer.setFont(new Font("Agency FB", Font.BOLD, 30));
+    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+
+    Timer t = new Timer(1000, new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        timeDisplayer.setText(sdf.format(new Date()));
+      }
+    });
+    t.start();
+    return timeDisplayer;
+
+  }
+
 
   public static void main(String[] args) throws InterruptedException, BadLocationException {
     new GamePanel();
   }
 
-  public JScrollPane anotherWay() throws BadLocationException {
-    JTextPane textPane = new JTextPane();
-    Font font = new Font("Times New Roman", Font.ITALIC, 22);
-    textPane.setFont(font);
-    SimpleAttributeSet attributeSet = new SimpleAttributeSet();
-    StyleConstants.setItalic(attributeSet, true);
-    StyleConstants.setForeground(attributeSet, Color.blue);
-    StyleConstants.setBackground(attributeSet, Color.white);
-    textPane.setCharacterAttributes(attributeSet, true);
-    textPane.setText("Описание слов по вертикали"
-        + "\n1)This is demo text4.This is demo text5. This is demo text6. "
-        + "\n2)This is demo text7. This is demo text8. This is demo text9. "
-        + "\n3)This is demo text10. This is demo text11. This is demo text12."
-        + "\n4)This is demo text13. This is demo text13. This is demo text14."
-        + "\n5)This is demo text15. This is demo text13. This is demo text16."
-        + "\n6)This is demo text17. This is demo text13. This is demo text18."
-        + "\n7)This is demo text19.This is demo text13.This is demo text20.");
-    JScrollPane scrollPane = new JScrollPane(textPane);
-    scrollPane.setVerticalScrollBarPolicy(
-        javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-    return scrollPane;
-  }
+
 }
 

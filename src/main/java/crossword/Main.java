@@ -29,24 +29,24 @@ public class Main {
   }
 
   private static void logic() {
-//        List<String> words = new ArrayList<>(List.of(
-//                "оса", "паук",
-//                "муха",
-//                "деревня", "яд", "еж",
-//                "theatre", "zoo", "octet"
-//        ));
-
     List<String> words = new ArrayList<>(List.of(
-        "высота", "радиус", "циркуль", "диаметр", "центр", "хорда"
+        "оса", "паук",
+        "муха",
+        "деревня", "яд", "еж",
+        "theatre", "zoo", "octet"
     ));
+
+//    List<String> words = new ArrayList<>(List.of(
+//        "высота", "радиус", "циркуль", "диаметр", "центр", "хорда"
+//    ));
 
 //        List<String> words = new ArrayList<>(List.of(
 //                "фрезер", "фуганок", "пила", "молоток", "ножовка", "гвоздодёр", "стамеска", "топор", "рейсмус"
 //        ));
 
-//        List<String> words = new ArrayList<>(List.of(
-//                "кот", "кран", "озеро"
-//        ));
+//    List<String> words = new ArrayList<>(List.of(
+//        "кот", "кран", "озеро"
+//    ));
 
     CrosswordGenerator ultimateCG = createCrossword(words);
 
