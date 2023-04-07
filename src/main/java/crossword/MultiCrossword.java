@@ -13,7 +13,7 @@ public class MultiCrossword {
         while (!words.isEmpty())
             CG.mergeCrosswords(createCrossword(words));
 
-//        CG.crosswordPrint();
+        CG.crosswordPrint();
     }
 
     public Tuple getSize() {

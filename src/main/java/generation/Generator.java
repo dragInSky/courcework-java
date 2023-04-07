@@ -42,13 +42,9 @@ public class Generator {
         return wordsInformation;
     }
 
-    public List<String> getWords() {
-        return words;
-    }
-
     private void generateWords() {
         int count = 0;
-        int quantity = ThreadLocalRandom.current().nextInt(6, 16);
+        int quantity = ThreadLocalRandom.current().nextInt(6, 11);
         while (count != quantity) {
             String word = HTMLParse.wordGeneration().toLowerCase();
             if (word.equals(""))

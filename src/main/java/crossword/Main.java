@@ -8,7 +8,6 @@ import generation.Generator;
 public class Main {
     public static void main(String[] args) {
         Generator generator = Generator.getInstance();
-        List<String> words = generator.getWords();
         String[][] crossword = generator.getCrossword();
         Tuple size = generator.getSize();
         List<Word> wordsInformation = generator.getWordsInformation();

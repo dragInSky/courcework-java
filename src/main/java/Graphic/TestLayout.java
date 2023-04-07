@@ -29,7 +29,6 @@ public class TestLayout extends JFrame {
     super("GridLayoutTest");
 
     Generator generator = Generator.getInstance();
-    List<String> words = generator.getWords();
     String[][] crossword = generator.getCrossword();
     Tuple size = generator.getSize();
     List<Word> wordsInformation = generator.getWordsInformation();
