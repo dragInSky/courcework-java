@@ -140,31 +140,48 @@ public class GamePanel extends JFrame {
   }
 
   public void fillDescriptions(List<Word> wordsInformation, JTextField[][] cells) {
-    int count = 0;
-    verticalDescription.append("Описание слов по вертикали\n");
-    gorizontalDescription.append("Описание слов по горизонтали\n");
+    int localCount = 0;
+    verticalDescription.append("Описание слов по вертикали:\n");
+    gorizontalDescription.append("Описание слов по горизонтали:\n");
     for (Word word : wordsInformation) {
       boolean orient = word.orientation();
+
       if (orient) {
         synchronized (gorizontalDescription) {
-          gorizontalDescription.append(++count)
-              .append(") ")
-              .append(
-                  word.repr()).append("\n");
+          if (cells[word.tuple().y()][word.tuple().x()].getText().equals("")) {
+            gorizontalDescription.append(++localCount)
+                .append(") ")
+                .append(
+                    word.repr()).append("\n");
+          } else {
+            gorizontalDescription.append(cells[word.tuple().y()][word.tuple().x()].getText())
+                .append(") ")
+                .append(
+                    word.repr()).append("\n");
+          }
         }
       } else {
         synchronized (verticalDescription) {
-          verticalDescription.append(++count).append(") ")
-              .append(
-                  word.repr()).append("\n");
+          if (cells[word.tuple().y()][word.tuple().x()].getText().equals("")) {
+            verticalDescription.append(++localCount).append(") ")
+                .append(
+                    word.repr()).append("\n");
+          } else {
+            verticalDescription.append(cells[word.tuple().y()][word.tuple().x()].getText())
+                .append(") ")
+                .append(
+                    word.repr()).append("\n");
+          }
         }
       }
-      cells[word.tuple().y()][word.tuple().x()].setText(String.valueOf(count));
+      if (cells[word.tuple().y()][word.tuple().x()].getText().equals("")) {
+        cells[word.tuple().y()][word.tuple().x()].setText(String.valueOf(localCount));
+      }
+      System.out.println(localCount + " " + word.word());
     }
   }
 
   private volatile int count = 180;
-
 
   public static void main(String[] args) throws InterruptedException, BadLocationException {
     new GamePanel();
