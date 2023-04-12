@@ -34,8 +34,8 @@ import javax.swing.text.BadLocationException;
 
 public class GamePanel extends JFrame {
 
-  private static final StringBuilder verticalDescription = new StringBuilder();
-  private static final StringBuilder gorizontalDescription = new StringBuilder();
+  private static final StringBuffer verticalDescription = new StringBuffer();
+  private static final StringBuffer gorizontalDescription = new StringBuffer();
 
   public GamePanel() throws InterruptedException, BadLocationException {
     super("Кроссворд");
@@ -64,10 +64,10 @@ public class GamePanel extends JFrame {
 
     JPanel crosswordPanel = new JPanel();
 
-    crosswordPanel.setLayout(new GridBagLayout());
-    GridBagConstraints constraints = new GridBagConstraints();
+    crosswordPanel.setLayout(new GridLayout(N, M));
+    //GridBagConstraints constraints = new GridBagConstraints();
     JTextField[][] cells = new JTextField[N][M];
-    fillTheCells(crossword, N, M, cells, crosswordPanel, constraints);
+    fillTheCells(crossword, N, M, cells, crosswordPanel);
     fillDescriptions(wordsInformation, cells);
     new EventKeyboardHadler().handleEventFromKeyboard(crossword, N, M, cells);
 
@@ -91,6 +91,7 @@ public class GamePanel extends JFrame {
 
     rightPanel.add(topRightPanel);
     rightPanel.add(bottomRightPanel);
+    //crosswordPanel.pack();
     mainGrid.add(crosswordPanel);
     mainGrid.add(rightPanel);
     getContentPane().add(mainGrid);
@@ -99,7 +100,7 @@ public class GamePanel extends JFrame {
   }
 
   public void fillTheCells(final String[][] crossword, final int N, final int M,
-      final JTextField[][] cells, final JPanel grid, final GridBagConstraints constraints) {
+      final JTextField[][] cells, final JPanel grid) {
     for (int i = 0; i < N; i++) {
       for (int j = 0; j < M; j++) {
         final JTextField inputCEll = new JTextField(3);
@@ -113,10 +114,10 @@ public class GamePanel extends JFrame {
           //туда нельзя ходить
         }
         cells[i][j] = inputCEll;
-        constraints.gridx = j;
-        constraints.gridy = i;
+        //constraints.gridx = j;
+        //constraints.gridy = i;
 
-        grid.add(inputCEll, constraints);
+        grid.add(inputCEll);//, constraints);
       }
 
     }
@@ -139,24 +140,48 @@ public class GamePanel extends JFrame {
   }
 
   public void fillDescriptions(List<Word> wordsInformation, JTextField[][] cells) {
-    int count = 0;
+    int localCount = 0;
+    verticalDescription.append("Описание слов по вертикали:\n");
+    gorizontalDescription.append("Описание слов по горизонтали:\n");
     for (Word word : wordsInformation) {
       boolean orient = word.orientation();
+
       if (orient) {
-        gorizontalDescription.append("Описание слов по горизонтали\n").append(++count).append(") ")
-            .append(
-                word.repr());
+        synchronized (gorizontalDescription) {
+          if (cells[word.tuple().y()][word.tuple().x()].getText().equals("")) {
+            gorizontalDescription.append(++localCount)
+                .append(") ")
+                .append(
+                    word.repr()).append("\n");
+          } else {
+            gorizontalDescription.append(cells[word.tuple().y()][word.tuple().x()].getText())
+                .append(") ")
+                .append(
+                    word.repr()).append("\n");
+          }
+        }
       } else {
-        verticalDescription.append("Описание слов по вертикали\n").append(++count).append(") ")
-            .append(
-                word.repr());
+        synchronized (verticalDescription) {
+          if (cells[word.tuple().y()][word.tuple().x()].getText().equals("")) {
+            verticalDescription.append(++localCount).append(") ")
+                .append(
+                    word.repr()).append("\n");
+          } else {
+            verticalDescription.append(cells[word.tuple().y()][word.tuple().x()].getText())
+                .append(") ")
+                .append(
+                    word.repr()).append("\n");
+          }
+        }
       }
-      cells[word.tuple().y()][word.tuple().x()].setText(String.valueOf(count));
+      if (cells[word.tuple().y()][word.tuple().x()].getText().equals("")) {
+        cells[word.tuple().y()][word.tuple().x()].setText(String.valueOf(localCount));
+      }
+      System.out.println(localCount + " " + word.word());
     }
   }
 
   private volatile int count = 180;
-
 
   public static void main(String[] args) throws InterruptedException, BadLocationException {
     new GamePanel();
