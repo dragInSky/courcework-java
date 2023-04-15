@@ -4,6 +4,7 @@ import static Graphic.AdditionalClasses.DeleteActionWrapper.removeBEEP;
 
 import Graphic.AdditionalClasses.BeautifulButton;
 import Graphic.AdditionalClasses.JTextFieldLimit;
+import Graphic.Handlers.CheckerAnswers;
 import Graphic.Handlers.EventButtonHandler;
 import Graphic.Handlers.EventKeyboardHadler;
 import Graphic.Handlers.ScreenSettingsManager;
@@ -47,8 +48,7 @@ public class GamePanel extends JFrame {
 
     JLabel testLabel = new JLabel(
         "1)эластичный продольный тяж, который является осевым скелетом предковых и некоторых современных форм животных организмов.");
-    String[] descriptionsVertical = {
-        testLabel.getText(),
+    String[] descriptionsVertical = {testLabel.getText(),
         "2)инструмент для черчения окружностей и дуг, также может быть использован для измерения расстояний, в частности, на картах.",
         "3)отрезок, соединяющий центр окружности (или сферы) с любой точкой, лежащей на окружности (или сфере), а также длина этого отрезка. Радиус составляет половину диаметра.",
         "4)отрезок, соединяющий две точки на окружности и проходящий через центр окружности, а также длина этого отрезка"};
@@ -87,7 +87,7 @@ public class GamePanel extends JFrame {
         scrollManager.getScrollerOnDescriptionPanels(GamePanel.gorizontalDescription.toString()));
 
     bottomRightPanel.add(sendAnswers);
-    bottomRightPanel.add(getTimePanel());
+    bottomRightPanel.add(getTimePanel(N, M, cells, wordsInformation));
 
     rightPanel.add(topRightPanel);
     rightPanel.add(bottomRightPanel);
@@ -123,7 +123,7 @@ public class GamePanel extends JFrame {
     }
   }
 
-  public JLabel getTimePanel() {
+  public JLabel getTimePanel(int N, int M, JTextField[][] cells, List<Word> words) {
     final JLabel timeDisplayer = new JLabel("", SwingConstants.CENTER);
     timeDisplayer.setFont(new Font("Arial", Font.BOLD, 23));
 
@@ -131,7 +131,11 @@ public class GamePanel extends JFrame {
       if (count > 0) {
         timeDisplayer.setText("Осталось " + count-- + " сек");
       } else {
-        timeDisplayer.setText("Game over");
+        int countRightAnswers = new CheckerAnswers().countOfRightAnswers(N, M, cells,
+            words);
+        timeDisplayer.setFont(new Font("Arial", Font.BOLD, 9));
+        timeDisplayer.setText(
+            "Количество правильных ответов " + countRightAnswers);
       }
     });
     timer.start();
@@ -149,28 +153,20 @@ public class GamePanel extends JFrame {
       if (orient) {
         synchronized (gorizontalDescription) {
           if (cells[word.tuple().y()][word.tuple().x()].getText().equals("")) {
-            gorizontalDescription.append(++localCount)
-                .append(") ")
-                .append(
-                    word.repr()).append("\n");
+            gorizontalDescription.append(++localCount).append(") ").append(word.repr())
+                .append("\n");
           } else {
             gorizontalDescription.append(cells[word.tuple().y()][word.tuple().x()].getText())
-                .append(") ")
-                .append(
-                    word.repr()).append("\n");
+                .append(") ").append(word.repr()).append("\n");
           }
         }
       } else {
         synchronized (verticalDescription) {
           if (cells[word.tuple().y()][word.tuple().x()].getText().equals("")) {
-            verticalDescription.append(++localCount).append(") ")
-                .append(
-                    word.repr()).append("\n");
+            verticalDescription.append(++localCount).append(") ").append(word.repr()).append("\n");
           } else {
             verticalDescription.append(cells[word.tuple().y()][word.tuple().x()].getText())
-                .append(") ")
-                .append(
-                    word.repr()).append("\n");
+                .append(") ").append(word.repr()).append("\n");
           }
         }
       }
@@ -181,7 +177,7 @@ public class GamePanel extends JFrame {
     }
   }
 
-  private volatile int count = 180;
+  private volatile int count = 40;
 
   public static void main(String[] args) throws InterruptedException, BadLocationException {
     new GamePanel();
