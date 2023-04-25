@@ -46,14 +46,14 @@ public class GamePanel extends JFrame {
     Tuple size = generator.getSize();
     List<Word> wordsInformation = generator.getWordsInformation();
 
-    JLabel testLabel = new JLabel(
-        "1)эластичный продольный тяж, который является осевым скелетом предковых и некоторых современных форм животных организмов.");
-    String[] descriptionsVertical = {testLabel.getText(),
-        "2)инструмент для черчения окружностей и дуг, также может быть использован для измерения расстояний, в частности, на картах.",
-        "3)отрезок, соединяющий центр окружности (или сферы) с любой точкой, лежащей на окружности (или сфере), а также длина этого отрезка. Радиус составляет половину диаметра.",
-        "4)отрезок, соединяющий две точки на окружности и проходящий через центр окружности, а также длина этого отрезка"};
-    final int M = size.x();
-    final int N = size.y();
+    final int M = size.x();//но как бы y
+    final int N = size.y();//но как бы x
+    for (int i = 0; i < N; i++) {
+      for (int j = 0; j < M; j++) {
+        System.out.print(crossword[i][j] + " ");
+      }
+      System.out.println();
+    }
 
     ScreenSettingsManager screenSettingsManager = new ScreenSettingsManager();
     screenSettingsManager.setSizeOfMainFrame(this);
@@ -69,6 +69,16 @@ public class GamePanel extends JFrame {
     JTextField[][] cells = new JTextField[N][M];
     fillTheCells(crossword, N, M, cells, crosswordPanel);
     fillDescriptions(wordsInformation, cells);
+
+    System.out.println();
+
+    for (int i = 0; i < N; i++) {
+      for (int j = 0; j < M; j++) {
+        System.out.print(cells[i][j].getText() + " ");
+      }
+      System.out.println();
+    }
+
     new EventKeyboardHadler().handleEventFromKeyboard(crossword, N, M, cells);
 
     JButton sendAnswers = BeautifulButton.getInstance();
@@ -113,13 +123,12 @@ public class GamePanel extends JFrame {
           inputCEll.setBackground(Color.BLACK);
           //туда нельзя ходить
         }
+        inputCEll.setText("_");
+
         cells[i][j] = inputCEll;
-        //constraints.gridx = j;
-        //constraints.gridy = i;
 
-        grid.add(inputCEll);//, constraints);
+        grid.add(inputCEll);
       }
-
     }
   }
 
@@ -151,26 +160,24 @@ public class GamePanel extends JFrame {
       boolean orient = word.orientation();
 
       if (orient) {
-        synchronized (gorizontalDescription) {
-          if (cells[word.tuple().y()][word.tuple().x()].getText().equals("")) {
-            gorizontalDescription.append(++localCount).append(") ").append(word.repr())
-                .append("\n");
-          } else {
-            gorizontalDescription.append(cells[word.tuple().y()][word.tuple().x()].getText())
-                .append(") ").append(word.repr()).append("\n");
-          }
+        if (cells[word.tuple().y()][word.tuple().x()].getText().equals("_")) {
+          gorizontalDescription.append(++localCount).append(") ").append(word.repr())
+              .append("\n");
+        } else {
+          gorizontalDescription.append(cells[word.tuple().y()][word.tuple().x()].getText())
+              .append(") ").append(word.repr()).append("\n");
         }
+
       } else {
-        synchronized (verticalDescription) {
-          if (cells[word.tuple().y()][word.tuple().x()].getText().equals("")) {
-            verticalDescription.append(++localCount).append(") ").append(word.repr()).append("\n");
-          } else {
-            verticalDescription.append(cells[word.tuple().y()][word.tuple().x()].getText())
-                .append(") ").append(word.repr()).append("\n");
-          }
+        if (cells[word.tuple().y()][word.tuple().x()].getText().equals("_")) {
+          verticalDescription.append(++localCount).append(") ").append(word.repr()).append("\n");
+        } else {
+          verticalDescription.append(cells[word.tuple().y()][word.tuple().x()].getText())
+              .append(") ").append(word.repr()).append("\n");
         }
+
       }
-      if (cells[word.tuple().y()][word.tuple().x()].getText().equals("")) {
+      if (cells[word.tuple().y()][word.tuple().x()].getText().equals("_")) {
         cells[word.tuple().y()][word.tuple().x()].setText(String.valueOf(localCount));
       }
       System.out.println(localCount + " " + word.word());

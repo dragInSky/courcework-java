@@ -10,16 +10,25 @@ public class CheckerAnswers {
   public int countOfRightAnswers(final int N, final int M, final JTextField[][] cells,
       List<Word> wordsInformation) {
     int count = 0;
+
+    System.out.println("Пришли узнать ответы");
+
+    for (int i = 0; i < N; i++) {
+      for (int j = 0; j < M; j++) {
+        System.out.print(cells[i][j].getText() + " ");
+      }
+      System.out.println();
+    }
+
     for (Word word : wordsInformation) {
       boolean orientation = word.orientation();
       boolean flag = true;
       Tuple cell = word.tuple();
-      int x = cell.x();
-      int y = cell.y();
-      if (orientation) {
+      int x = cell.y();//макс корявый
+      int y = cell.x();
+      if (!orientation) {
         //вертикаль
         for (int i = 0; i < word.word().length(); i++) {
-          System.out.println(cells[x + i][y].getText() + " x+i = " + (x + i) + " y = " + y);
           if (!cells[x + i][y].getText().equals("")) {
             if (!(cells[x + i][y].getText().charAt(0) == (word.word().charAt(i)))) {
               flag = false;
@@ -34,7 +43,7 @@ public class CheckerAnswers {
         //горизонталь
         for (int i = 0; i < word.word().length(); i++) {
           System.out.println(cells[x][y + i].getText() + " x = " + x + " y+i = " + (i + y));
-          if (!cells[x][y + i].getText().equals("")) {
+          if (!cells[x][y + i].getText().equals("_")) {
             if (!(cells[x][y + i].getText().charAt(0) == (word.word().charAt(i)))) {
               flag = false;
               break;
