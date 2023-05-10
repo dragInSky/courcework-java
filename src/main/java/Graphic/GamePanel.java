@@ -4,24 +4,19 @@ import static Graphic.AdditionalClasses.DeleteActionWrapper.removeBEEP;
 
 import Graphic.AdditionalClasses.BeautifulButton;
 import Graphic.AdditionalClasses.JTextFieldLimit;
+import Graphic.AdditionalClasses.SearchPlayersWindow;
 import Graphic.Handlers.CheckerAnswers;
 import Graphic.Handlers.EventButtonHandler;
 import Graphic.Handlers.EventKeyboardHadler;
 import Graphic.Handlers.ScreenSettingsManager;
 import Graphic.Handlers.ScrollManager;
+import Network.Client;
 import crossword.Tuple;
 import crossword.Word;
 import generation.Generator;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -40,7 +35,9 @@ public class GamePanel extends JFrame {
 
   public GamePanel() throws InterruptedException, BadLocationException {
     super("Кроссворд");
-
+    SearchPlayersWindow playersWindow = new SearchPlayersWindow();
+    Client client = new Client();
+    client.connectToServer();
     Generator generator = Generator.getInstance();
     String[][] crossword = generator.getCrossword();
     Tuple size = generator.getSize();
@@ -54,6 +51,7 @@ public class GamePanel extends JFrame {
       }
       System.out.println();
     }
+    playersWindow.turnOFF();
 
     ScreenSettingsManager screenSettingsManager = new ScreenSettingsManager();
     screenSettingsManager.setSizeOfMainFrame(this);
@@ -140,11 +138,9 @@ public class GamePanel extends JFrame {
       if (count > 0) {
         timeDisplayer.setText("Осталось " + count-- + " сек");
       } else {
-        int countRightAnswers = new CheckerAnswers().countOfRightAnswers(N, M, cells,
-            words);
+        int countRightAnswers = new CheckerAnswers().countOfRightAnswers(N, M, cells, words);
         timeDisplayer.setFont(new Font("Arial", Font.BOLD, 9));
-        timeDisplayer.setText(
-            "Количество правильных ответов " + countRightAnswers);
+        timeDisplayer.setText("Количество правильных ответов " + countRightAnswers);
       }
     });
     timer.start();
@@ -161,8 +157,7 @@ public class GamePanel extends JFrame {
 
       if (orient) {
         if (cells[word.tuple().y()][word.tuple().x()].getText().equals("_")) {
-          gorizontalDescription.append(++localCount).append(") ").append(word.repr())
-              .append("\n");
+          gorizontalDescription.append(++localCount).append(") ").append(word.repr()).append("\n");
         } else {
           gorizontalDescription.append(cells[word.tuple().y()][word.tuple().x()].getText())
               .append(") ").append(word.repr()).append("\n");
