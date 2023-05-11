@@ -129,7 +129,7 @@ public class HTMLParse {
                 res.append(definitions.get(i).text()).append("; ");
             }
 
-            return res.substring(0, res.length() - 2) + ".";
+            return res.substring(0, res.length() - 2);
         } catch (IOException e) {
             return null;
         }
@@ -150,7 +150,7 @@ public class HTMLParse {
                 res.append(definitions.get(i).text()).append("; ");
             }
 
-            return res.substring(0, res.length() - 2) + ".";
+            return res.substring(0, res.length() - 2);
         } catch (IOException e) {
             return null;
         }

@@ -16,7 +16,8 @@ public class RepresentationParse {
                 repeat = "_".repeat(len - 1);
             }
             definition = definition.replace(preWord, repeat)
-                    .replace(preWord.toLowerCase(), repeat);
+                    .replace(preWord.toLowerCase(), repeat)
+                    .replace(preWord.toUpperCase(), repeat);
         } else
             definition = definition.replace(word, "_".repeat(len));
 
