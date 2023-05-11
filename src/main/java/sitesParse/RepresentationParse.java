@@ -4,9 +4,9 @@ import java.util.Objects;
 
 public class RepresentationParse {
     private static String toReplace(String definition, String word) {
-        for (int i = 0, len = word.length(); i < 3 && len - i > len / 2; i++) {
+        for (int i = 0, len = word.length(); i < 2 && len - i > len / 2; i++) {
             String preWord = word.substring(0, len - i);
-            String repeat = "*".repeat(len - i);
+            String repeat = "_".repeat(len - i);
             definition = definition.replace(preWord, repeat)
                     .replace(preWord.toLowerCase(), repeat);
         }

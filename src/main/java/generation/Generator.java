@@ -61,7 +61,7 @@ public class Generator {
             };
 
             if (wordRepr != null) {
-//                System.out.println("Word is:\t" + word + '\n' + wordRepr + '\n');
+                System.out.println("Word is:\t" + word + '\n' + wordRepr + '\n');
                 representations.put(word, wordRepr);
                 words.add(word);
                 count++;

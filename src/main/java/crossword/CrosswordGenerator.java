@@ -79,23 +79,29 @@ public class CrosswordGenerator {
     }
 
     private boolean isHorizontalAccessible(String word, int posX, int posY) {
-        for (int idx = 1, wordLen = word.length(); idx < wordLen; idx++)
+        for (int idx = 0, wordLen = word.length(); idx < wordLen; idx++)
             if ((crossword[posY][posX + idx] != '_' && crossword[posY][posX + idx] != word.charAt(idx)) ||
                     (crossword[posY + 1][posX + idx] != '_' && crossword[posY + 1][posX + idx - 1] != '_') ||
                     (crossword[posY - 1][posX + idx] != '_' && crossword[posY - 1][posX + idx - 1] != '_') ||
                     (posX - 1 >= 0 && crossword[posY][posX - 1] != '_') ||
-                    (posX + wordLen <= len && crossword[posY][posX + wordLen] != '_'))
+                    (posX + wordLen <= len && crossword[posY][posX + wordLen] != '_') ||
+                    (crossword[posY][posX + idx] == '_' &&
+                            (crossword[posY + 1][posX + idx] != '_' || crossword[posY - 1][posX + idx] != '_'))
+            )
                 return false;
         return true;
     }
 
     private boolean isVerticalAccessible(String word, int posX, int posY) {
-        for (int idx = 1, wordLen = word.length(); idx < wordLen; idx++)
+        for (int idx = 0, wordLen = word.length(); idx < wordLen; idx++)
             if ((crossword[posY + idx][posX] != '_' && crossword[posY + idx][posX] != word.charAt(idx)) ||
                     (crossword[posY + idx][posX + 1] != '_' && crossword[posY + idx - 1][posX + 1] != '_') ||
                     (crossword[posY + idx][posX - 1] != '_' && crossword[posY + idx - 1][posX - 1] != '_') ||
                     (posY - 1 >= 0 && crossword[posY - 1][posX] != '_') ||
-                    (posY + wordLen <= len && crossword[posY + wordLen][posX] != '_'))
+                    (posY + wordLen <= len && crossword[posY + wordLen][posX] != '_') ||
+                    (crossword[posY + idx][posX] == '_' &&
+                            (crossword[posY + idx][posX + 1] != '_' || crossword[posY + idx][posX - 1] != '_'))
+            )
                 return false;
         return true;
     }
@@ -213,15 +219,23 @@ public class CrosswordGenerator {
         crossword = newCrossword;
     }
 
-    public void mergeCrosswords(CrosswordGenerator CG) {
-        if (this == CG)
+    public void mergeCrosswords(CrosswordGenerator other) {
+        if (this == other)
             return;
 
-        List<String> secondUsedWords = CG.getUsedWords();
-        List<Boolean> secondOrientation = CG.getOrientation();
+        if (height + (int)(height * 0.2) < len) {
+            addBottom(other);
+        } else {
+            addRight(other);
+        }
+    }
+
+    private void addBottom(CrosswordGenerator other) {
+        List<String> secondUsedWords = other.getUsedWords();
+        List<Boolean> secondOrientation = other.getOrientation();
 
         for (int i = 0, size = secondUsedWords.size(); i < size; i++) {
-            Tuple secondPos = CG.absWordPos(secondUsedWords.get(i), secondOrientation.get(i));
+            Tuple secondPos = other.absWordPos(secondUsedWords.get(i), secondOrientation.get(i));
             wordsInformation.add(new Word(
                     secondUsedWords.get(i),
                     secondOrientation.get(i),
@@ -230,8 +244,8 @@ public class CrosswordGenerator {
             );
         }
 
-        int newLen = Math.max(len, CG.len);
-        int newHeight = height + CG.height + 1;
+        int newLen = Math.max(len, other.len);
+        int newHeight = height + other.height + 1;
 
         char[][] newCrossword = new char[newHeight][newLen];
 
@@ -242,7 +256,41 @@ public class CrosswordGenerator {
                 else if (i == height)
                     newCrossword[i][j] = '_';
                 else
-                    newCrossword[i][j] = (j < CG.len) ? CG.crossword[i - height - 1][j] : '_';
+                    newCrossword[i][j] = (j < other.len) ? other.crossword[i - height - 1][j] : '_';
+
+        len = newLen;
+        height = newHeight;
+
+        crossword = newCrossword;
+    }
+
+    private void addRight(CrosswordGenerator other) {
+        List<String> secondUsedWords = other.getUsedWords();
+        List<Boolean> secondOrientation = other.getOrientation();
+
+        for (int i = 0, size = secondUsedWords.size(); i < size; i++) {
+            Tuple secondPos = other.absWordPos(secondUsedWords.get(i), secondOrientation.get(i));
+            wordsInformation.add(new Word(
+                    secondUsedWords.get(i),
+                    secondOrientation.get(i),
+                    new Tuple(secondPos.x() + len + 1, secondPos.y()),
+                    "")
+            );
+        }
+
+        int newLen = len + other.len + 1;
+        int newHeight = Math.max(height, other.height);
+
+        char[][] newCrossword = new char[newHeight][newLen];
+
+        for (int i = 0; i < newHeight; i++)
+            for (int j = 0; j < newLen; j++)
+                if (j < len)
+                    newCrossword[i][j] = (i < height) ? crossword[i][j] : '_';
+                else if (j == len)
+                    newCrossword[i][j] = '_';
+                else
+                    newCrossword[i][j] = (i < other.height) ? other.crossword[i][j - len - 1] : '_';
 
         len = newLen;
         height = newHeight;
