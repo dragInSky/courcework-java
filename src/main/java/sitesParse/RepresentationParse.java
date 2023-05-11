@@ -4,12 +4,21 @@ import java.util.Objects;
 
 public class RepresentationParse {
     private static String toReplace(String definition, String word) {
-        for (int i = 0, len = word.length(); i < 2 && len - i > len / 2; i++) {
-            String preWord = word.substring(0, len - i);
-            String repeat = "_".repeat(len - i);
+        String vowels = "аеёийоуыэюя";
+        int len = word.length();
+        if (len > 3 && vowels.indexOf(word.charAt(len - 1)) != -1) {
+            String preWord, repeat;
+            if (vowels.indexOf(word.charAt(len - 2)) != -1) {
+                preWord = word.substring(0, len - 2);
+                repeat = "_".repeat(len - 2);
+            } else {
+                preWord = word.substring(0, len - 1);
+                repeat = "_".repeat(len - 1);
+            }
             definition = definition.replace(preWord, repeat)
                     .replace(preWord.toLowerCase(), repeat);
-        }
+        } else
+            definition = definition.replace(word, "_".repeat(len));
 
         return definition;
     }

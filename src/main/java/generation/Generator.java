@@ -51,7 +51,12 @@ public class Generator {
                 continue;
 
             String wordRepr = switch (ThreadLocalRandom.current().nextInt(0, 6)) {
-                case 0 -> RepresentationParse.definitionParse(HTMLParse.dictionary(word), word);
+                case 0 -> {
+                    String[] tmpWord = new String[]{word};
+                    String def = HTMLParse.dictionary(tmpWord);
+                    word = tmpWord[0];
+                    yield RepresentationParse.definitionParse(def, word);
+                }
                 case 1 -> RepresentationParse.joinParse(HTMLParse.join(word), word);
                 case 2 -> HTMLParse.related(word);
                 case 3 -> RepresentationParse.sentencesParse(HTMLParse.sentences(word), word);
