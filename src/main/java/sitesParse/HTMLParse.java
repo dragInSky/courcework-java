@@ -23,6 +23,10 @@ public class HTMLParse {
 
             return word != null ? word.text() : "";
         } catch (IOException e) {
+            System.out.println("Exception");
+            System.out.println(e.getMessage());
+            System.out.println("Стек вызовов:");
+            e.printStackTrace();
             return "";
         }
     }
@@ -51,6 +55,11 @@ public class HTMLParse {
 
             return "";
         } catch (IOException e) {
+            System.out.println("Exception");
+            System.out.println(e.getMessage());
+            System.out.println("Стек вызовов:");
+            e.printStackTrace();
+
             return "";
         }
     }
@@ -72,6 +81,11 @@ public class HTMLParse {
 
             return res.substring(0, res.length() - 2) + ".";
         } catch (IOException e) {
+            System.out.println("Exception");
+            System.out.println(e.getMessage());
+            System.out.println("Стек вызовов:");
+            e.printStackTrace();
+
             return "";
         }
     }
@@ -98,6 +112,11 @@ public class HTMLParse {
 
             return res.substring(0, res.length() - 2) + ".";
         } catch (IOException e) {
+            System.out.println("Exception");
+            System.out.println(e.getMessage());
+            System.out.println("Стек вызовов:");
+            e.printStackTrace();
+
             return null;
         }
     }
@@ -110,6 +129,11 @@ public class HTMLParse {
 
             return definitions != null ? "Предложение со словом:\t" + definitions.text() : "";
         } catch (IOException e) {
+            System.out.println("Exception");
+            System.out.println(e.getMessage());
+            System.out.println("Стек вызовов:");
+            e.printStackTrace();
+
             return "";
         }
     }
@@ -131,6 +155,11 @@ public class HTMLParse {
 
             return res.substring(0, res.length() - 2);
         } catch (IOException e) {
+            System.out.println("Exception");
+            System.out.println(e.getMessage());
+            System.out.println("Стек вызовов:");
+            e.printStackTrace();
+
             return null;
         }
     }
@@ -152,6 +181,11 @@ public class HTMLParse {
 
             return res.substring(0, res.length() - 2);
         } catch (IOException e) {
+            System.out.println("Exception");
+            System.out.println(e.getMessage());
+            System.out.println("Стек вызовов:");
+            e.printStackTrace();
+
             return null;
         }
     }

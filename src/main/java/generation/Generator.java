@@ -70,6 +70,7 @@ public class Generator {
                 representations.put(word, wordRepr);
                 words.add(word);
                 count++;
+                System.out.println(count);
             }
         }
     }
