@@ -25,6 +25,7 @@ public class ServerWinnerManager {
             int num1Client1 = inFromClient1.readInt();
             int num1Client2 = inFromClient2.readInt();
 
+            System.out.println(num1Client1 + " " + num1Client2);
 
             if (num1Client1 > num1Client2) {
                 outToClient1.writeUTF("WIN");

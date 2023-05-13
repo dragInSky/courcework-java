@@ -36,7 +36,7 @@ public class GamePanel extends JFrame {
         super("Кроссворд");
         SearchPlayersWindow playersWindow = new SearchPlayersWindow();
         Client client = new Client();//доп челик
-        //client.connectToServer();
+        client.connectToServer();
         System.out.println("Начинаем генерить слова...");
         Generator generator = Generator.getInstance();
         String[][] crossword = generator.getCrossword();
@@ -145,17 +145,12 @@ public class GamePanel extends JFrame {
                     if (new SenderCounts().sendCountToServer(countRightAnswers)
                             .getResult()
                             .equals("LOSE")) {
-                        new WinFrame();
-                    } else {
+                        System.out.println("Выводим окно проигравшего...");
                         new LoseFrame();
+                    } else {
+                        new WinFrame();
                     }
                     isShownWhoWin = true;
-                    try {
-                        Thread.sleep(1000);
-                        System.exit(0);
-                    } catch (InterruptedException ex) {
-                        throw new RuntimeException(ex);
-                    }
                 }
             }
         });

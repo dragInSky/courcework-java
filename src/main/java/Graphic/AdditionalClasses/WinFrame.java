@@ -11,8 +11,8 @@ public class WinFrame extends JFrame {
 
         setVisible(true);
 
-        // Закрытие окна через 3 секунды
-        Timer timer = new Timer(3000, e -> dispose());
+        // Закрытие окна через 5 секунды
+        Timer timer = new Timer(5000, e -> dispose());
         timer.setRepeats(false);
         timer.start();
     }
